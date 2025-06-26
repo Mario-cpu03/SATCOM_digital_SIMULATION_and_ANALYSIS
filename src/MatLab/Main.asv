@@ -1,0 +1,9 @@
+%%% Main File
+
+% The script Main.m is responsible for the execution of all the other
+% scripts.
+% It receivs MonteCarlo, NumMessages and BitPerMessage as input parameters
+% where MonteCarlo is to intend as the cardinality of the results sample 
+% (number of times the simulation is repeated)
+
+function [] = main(MonteCarlo, NumMessages, BitPerMessage)
