@@ -14,8 +14,9 @@
 % up of. 
 
 function [] = main(MonteCarlo, NumMessages, BitPerMessage)
-
+fprintf('\n*************\n');
 PeDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitPerMessage);
+
 
 PeDataCode = ChannelCod(MonteCarlo, NumMessages, BitPerMessage);
 
