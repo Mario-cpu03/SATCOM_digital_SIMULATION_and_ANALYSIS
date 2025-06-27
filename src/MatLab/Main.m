@@ -13,7 +13,7 @@
 % BitPerMessage is the number of Bits every app layer packet is made
 % up of. 
 
-function [] = main(MonteCarlo, NumMessages, BitPerMessage)
+function [] = Main(MonteCarlo, NumMessages, BitPerMessage)
 
 fprintf('\n*************\n');
 PeDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitPerMessage);
