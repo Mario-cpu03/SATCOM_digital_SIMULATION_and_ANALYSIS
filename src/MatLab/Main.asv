@@ -1,6 +1,6 @@
-%%% Main File
+%%% Main Script
 
-% The script Main.m is responsible for the execution of all the other
+%% The script Main.m is responsible for the execution of all the other
 % scripts.
 % It receivs just MonteCarlo as input parameter.
 % MonteCarlo is to intend as the cardinality of the results sample 
@@ -8,26 +8,33 @@
 
 % Other relevant parameters are:
 
-% "NumMessages" is the number of application layer packets the transmitter
-% node wants to send to the receiver
+% "NumMessages" is the number of total messages that the two nodes will
+% send. In this optic, Tx base will send a text message representing a
+% command to the Rx base. The Rx will answer with a state message as soon as the command is
+% executed
 
 % "Bit*" is the data dimension in bit for every message. We'll suppose a Tx text
-% message of medium-low size (256 bit), an Rx state message of 128 bit and a
+% message of medium-low size (512 bit), an Rx state message of 256 bit and a
 % 8 bit Tx Acknowledgement message.
 
-% Data dimensions are chosen in respect of the  MIL-STD-188 proto
+% Data dimensions and Modulation schema (QPSK) are chosen as defined in the 
+% MIL-STD-188 protocol.
+
+% System's performance will be evaluated using BER and effective
+% Throughput.
 
 function [] = Main(MonteCarlo)
 
-
+fprintf('\n*************\n');
+BerDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+fprintf('\n*************\n');
 
 fprintf('\n*************\n');
-PeDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+BerDataCode = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+fprintf('\n*************\n');
 
 fprintf('\n*************\n');
-PeDataCode = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
-
+DataWriting(BerDataNoCode, BerDataCode);
 fprintf('\n*************\n');
-DataWriting(PeDataNoCode, PeDataCode);
 
 end
