@@ -18,6 +18,9 @@
 % frequencies.
 % For simplicity, scintillation effects will not be considered.
 
+% The channel is not a lossless one, in fact AWGN, Thermal Noise and
+% Atmospheric Attenuation will be summed up on the transmitted signal.
+
 function [] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
@@ -47,19 +50,59 @@ range = 36000e3;
 freqsend = 10e9;
 freqback = 8e9;
 
+%% Thermal Noise construction
 
-%% Atmospheric Losses random variables construction
+% Boltzmann Constant
+k = 1.38e-23;
+% Kelvin Temperature
+T = 290;
+% Channel band uplink
+Bup = 10e9; 
+% Channel band downlink
+Bdw = 8e9;
+% Noise Power uplink
+PnUp = k * T * Bup;   
+% Noise Power downlink
+PnDw = k * T * Bdw;
 
-% Loss Node->Sat in dB
-Lsend = gaspl(range,freqsend,T,P,Den);
-% Loff Sat->Node in dB
-Lback = gaspl(range,freqback,T,P,Den);
 
-
-%% MonteCarlo communications simulation
+%% MonteCarlo times communication simulation
 
 for (i = 1:MonteCarlo)
+
+    %%Messages random generation:
+    Command = randi([0,1],1,BitTx); 
+    Answer = randi([0,1],1,BitRx);
+    Ack = randi([0,1],1,BitAck);
     
+    %%Modulation
+    modSignalCommand = pskmod(Command,4);
+    modSignalAnswer = pskmod(Answer,4);
+    modSignalAck = pskmod(Ack,4);
+    
+    %%Atmospheric Losses - random variables construction:
+    % Loss Node->Sat in dB
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    % Loff Sat->Node in dB
+    Lback = gaspl(range,freqback,T,P,Den);
+
+    %%Transmission on the channel towards the satellite
+    NC = length(modSignalCommand);
+    NANS = length(modSignalAnswer);
+    NACK = length(modSignalAck);
+    NoiseStd = sqrt(PnUp);   
+    % Thermal Noise
+    ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
+    ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
+    ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    % Loss on signals
+    modSignalCommandSat = modSignalCommand + ThermalNoiseC + Lsend; %INSERT AWGN
+    modSignalAnswerSat = modSignalAnswer + ThermalNoiseAns + Lsend;
+    modSignalAckSat = modSignalAck + ThermalNoiseAck + Lsend;
+
+    %%Satellite Relay amplification
+
+
 end
 
 end

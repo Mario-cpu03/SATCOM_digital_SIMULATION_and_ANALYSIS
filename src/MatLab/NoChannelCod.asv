@@ -1,8 +1,102 @@
 %%% NoChannelCod Script
 
-%% BER and effective throughput evaluation without Coding 
-% According to 
-function [] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+%% The script NoChannelCod.m is responsible for the BER and throughput evaluation
+% on a non coded channel. 
 
+% This analysis will be conducted to better comprehend Convolutional Coding
+% strategies effect on the system's performance comparing its results with 
+% the ones produced by a coded channel.
+
+% Weather conditions will follow the assumption of equiprobability, 
+% in order to model different meteorological conditions without focusing 
+% on the geolocation of the nodes or other parameters. These conditions 
+% will be represented by the temperature "T", pressure "P", and atmospheric 
+% water vapor density "Den".
+% In this context, T and Den will be random variables strictly 
+% correlated with the Atmospheric Attenuation (L). Note that this quantity 
+% will vary depending on the considered link, due to the different carrier 
+% frequencies.
+% For simplicity, scintillation effects will not be considered.
+
+% The channel is not a lossless one, in fact AWGN, Thermal Noise and
+% Atmospheric Attenuation will be summed up on the transmitted signal.
+
+function [] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+%% Weather condition random variables construction: Uniform continuous distributions  
+% Two losses will be produced: one for the Node->Sat 
+% link and one for the Sat->Node link.
+
+% Temperature in Kelvin (0-37 degree Celsius)
+T = unifrnd(270,310); 
+% 0°C
+T0 = 273.15; 
+% Atmospheric Pressure in Pa, set to sea-level values
+P = 101300.0;
+% Relative Umidity
+RU = unifrnd(0,1);
+% Gas constant for water vapor
+R = 461.5; 
+% Saturation Pression of water vapor in Pa
+P0 = 611;
+% Latent heat of vaporization of water in J/kg
+L = 2.25e6;
+% Saturation Pression of the gas
+SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+% Vapor density Calculated with Clausius-Clapeyron law
+Den = (RU * SatP) / (R * T);
+% Distance from the satellatie
+range = 36000e3;
+% Frequency of the carrier
+freqsend = 10e9;
+freqback = 8e9;
+
+%% Thermal Noise construction
+
+%Boltzmann Constant
+k = 1.38e-23;
+%
+T = 290;                
+B = 10e6;               % Banda del canale [Hz] (es. 10 MHz)
+Pn = k * T * B;   
+
+
+%% MonteCarlo communications simulation
+
+for (i = 1:MonteCarlo)
+
+    %%Messages random generation:
+    Command = randi([0,1],1,BitTx); 
+    Answer = randi([0,1],1,BitRx)
+    Ack = randi([0,1],1,BitAck);
+    
+    %%Modulation
+    modSignalCommand = pskmod(Command,4);
+    modSignalAnswer = pskmod(Answer,4);
+    modSignalAck = pskmod(Ack,4);
+    
+    %%Transmission on the channel towards the satellite
+    NC = length(modSignalCommand);
+    NANS = length(modSignalAnswer);
+    NACK = length(modSignalAck);
+    NoiseStd = sqrt(Pn);   
+    % Thermal Noise
+    ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
+    ThermalNoiseAns = 
+    ThermalNoiseAck = 
+    % Loss on signals
+    modSignalCommandSat = modSignalCommand + 
+    modSignalAnswerSat = 
+    modSignalAckSat = 
+
+    %%Satellite Relay amplification
+
+
+    %%Atmospheric Losses - random variables construction:
+    % Loss Node->Sat in dB
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    % Loff Sat->Node in dB
+    Lback = gaspl(range,freqback,T,P,Den);
+
+end
 
 end

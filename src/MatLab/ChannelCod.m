@@ -53,7 +53,7 @@ freqsend = 10e9;
 freqback = 8e9;
 
 
-%% Atmospheric Losses random variables construction
+%% Atmospheric Losses - random variables construction
 
 % Loss Node->Sat in dB
 Lsend = gaspl(range,freqsend,T,P,Den);
