@@ -13,7 +13,7 @@
 
 % Each dataset will have the structure that follows:
 % BER, THROUGHPUT, PER, SNR, AWGN, ATMOSPHERIC_ATT, 
-% METEO_COND, TRANS_POW, BACK_FREQ, THERMAL_NOISE.
+% T, P, Den, TRANS_POW, BACK_FREQ, THERMAL_NOISE.
 
 function[] = DataWriting(BerDataNoCode, BerDataCode)
 

@@ -36,7 +36,57 @@
 % Throughput. Other performance parameters will be PER and SNR, but their
 % role will be a marginal one.
 
+% Weather conditions will follow the assumption of equiprobability, 
+% in order to model different meteorological conditions without focusing 
+% on the geolocation of the nodes or other parameters. These conditions 
+% will be expressed through the temperature "T", pressure "P", and atmospheric 
+% water vapor density "den".
+% In this context, WeatherCond will be a random variable strictly 
+% correlated with the Atmospheric Attenuation (L). Note that this quantity will 
+% change in respect to the link considered, due to the different carrier 
+% For simplicity, scintillation effects will not be considered.
+
 function [] = Main(MonteCarlo)
+
+%% Init Parameters
+
+NumMessages = 3;
+BitTx = 512; BitRx = 256; BitAck = 8;
+
+%% Weather condition random variables construction: Uniform continuous distributions  
+% An array of two observation will be produced: one for the Node->Sat 
+% link and one for the Sat->Node link.
+
+% Temperature in Kelvin (0-37 degree Celsius)
+T = unifrnd(270,310); 
+% 0°C
+T0 = 273.15; 
+% Atmospheric Pressure in Pa, set to sea-level values
+P = 101300.0;
+% Relative Umidity
+RU = unifrnd(0,1);
+% Gas constant for water vapor
+R = 461.5; 
+% Saturation Pression of water vapor
+P0 = 611;
+% Latent heat of vaporization of water in J/kg
+L = 2.25e6;
+% Saturation Pression of the gas
+SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+% Vapor density Calculated with Clausius-Clapeyrom law
+Den = (RU * SatP) / (R * T);
+% Distance from the satellatie
+range = 36000e3;
+
+% Frequency of the carrier
+freqsend = 10e9;
+freqback = 8e9;
+% Loss Node->Sat
+Lsend = gaspl(range,freqsend,T,P,Den);
+disp(Lsend);
+% Loff Sat->Node
+Lback = gaspl(range,freqback,T,P,Den);
+disp(Lback);
 
 fprintf('\n*************\n');
 BerDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
