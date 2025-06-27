@@ -12,8 +12,8 @@
 % transmissions.
 
 % Each dataset will have the structure that follows:
-% BER, THROUGHPUT, PER, SNR, AWGN, ATMOSPHERIC_ATT, 
-% T, P, Den, TRANS_POW, BACK_FREQ, THERMAL_NOISE.
+% BER, THROUGHPUT, PER, SNR, AWGN, MeanAtmLoss, 
+% T, Den, TRANS_POW, BACK_FREQ, THERMAL_NOISE.
 
 function[] = DataWriting(BerDataNoCode, BerDataCode)
 

@@ -61,5 +61,10 @@ Lsend = gaspl(range,freqsend,T,P,Den);
 Lback = gaspl(range,freqback,T,P,Den);
 
 
+%% MonteCarlo communications simulation
+
+for (i = 1:MonteCarlo)
+    
+end
 
 end
