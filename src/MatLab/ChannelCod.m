@@ -1,6 +1,6 @@
 %%% Probability of bit Error with channel code
 
-function [] = ChannelCod(MonteCarlo, NumMessages, BitPerMessage)
+function [] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 
 
 end

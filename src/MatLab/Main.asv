@@ -12,12 +12,14 @@
 % node wants to send to the receiver
 
 % "Bit*" is the data dimension in bit for every message. We'll suppose a Tx text
-% message of medium-low size (512 bit), an Rx state message of 256 bit and a
+% message of medium-low size (256 bit), an Rx state message of 128 bit and a
 % 8 bit Tx Acknowledgement message.
 
-% Data dimensions are chosen as defined in the MIL-STD-188 protocol.
+% Data dimensions are chosen in respect of the  MIL-STD-188 proto
 
 function [] = Main(MonteCarlo)
+
+
 
 fprintf('\n*************\n');
 PeDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
