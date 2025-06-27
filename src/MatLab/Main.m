@@ -22,8 +22,16 @@
 % Data dimensions and Modulation schema (QPSK) are chosen as defined in the 
 % MIL-STD-188 protocol.
 
-% System's performance will be evaluated using BER and effective
-% Throughput.
+% Transmissive Power per Link will not be fixed, due to the needs of perfomance
+% evaluation, and it's value will vary according to MIL-STD-188 protocol
+% between 1W and 50W.
+
+% Frequency Band choice, one more time accordingly with the chosen
+% protocol, is an SHF X-band (8-12GHz)
+
+% System's performance will be evaluated using mostly BER and effective
+% Throughput. Other performance parameters will be PER and SNR, but their
+% role will be a marginal one.
 
 function [] = Main(MonteCarlo)
 

@@ -10,8 +10,10 @@
 
 % "NumMessages" is the number of total messages that the two nodes will
 % send. In this optic, Tx base will send a text message representing a
-% command to the Rx base. The Rx will answer with a state message as soon as the command is
-% executed
+% command to the Rx base. The Rx will answer with a state message as soon 
+% as the command is executed succesfully or failed. The Txbase  will send an Ack
+% message to confirm it has received the answer and close the
+% communication.
 
 % "Bit*" is the data dimension in bit for every message. We'll suppose a Tx text
 % message of medium-low size (512 bit), an Rx state message of 256 bit and a
@@ -20,8 +22,16 @@
 % Data dimensions and Modulation schema (QPSK) are chosen as defined in the 
 % MIL-STD-188 protocol.
 
-% System's performance will be evaluated using BER and effective
-% Throughput.
+% Transmissive Power per Link will not be fixed, due to the needs of perfomance
+% evaluation, and it's value will vary according to MIL-STD-188 protocol
+% between 1W and 50W.
+
+% Frequency Band choice, one more time accordingly with the chosen
+% protocol, is an SHF X-band (8-12GHz)
+
+% System's performance will be evaluated using mostly BER and effective
+% Throughput. Other performance parameter will be PER, but it's role will
+% be a marginal one.
 
 function [] = Main(MonteCarlo)
 
