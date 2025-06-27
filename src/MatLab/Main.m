@@ -1,6 +1,6 @@
-%%% Main File
+%%% Main Script
 
-% The script Main.m is responsible for the execution of all the other
+%% The script Main.m is responsible for the execution of all the other
 % scripts.
 % It receivs just MonteCarlo as input parameter.
 % MonteCarlo is to intend as the cardinality of the results sample 
@@ -15,17 +15,24 @@
 % message of medium-low size (512 bit), an Rx state message of 256 bit and a
 % 8 bit Tx Acknowledgement message.
 
-% Data dimensions are chosen as defined in the MIL-STD-188 protocol.
+% Data dimensions and Modulation schema (QPSK) are chosen as defined in the 
+% MIL-STD-188 protocol.
+
+% System's performance will be evaluated using BER and effective
+% Throughput.
 
 function [] = Main(MonteCarlo)
 
 fprintf('\n*************\n');
-PeDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+BerDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+fprintf('\n*************\n');
 
 fprintf('\n*************\n');
-PeDataCode = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+BerDataCode = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+fprintf('\n*************\n');
 
 fprintf('\n*************\n');
-DataWriting(PeDataNoCode, PeDataCode);
+DataWriting(BerDataNoCode, BerDataCode);
+fprintf('\n*************\n');
 
 end

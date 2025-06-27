@@ -1,0 +1,8 @@
+%%% NoChannelCod Script
+
+%% BER and effective throughput evaluation without Coding 
+% According to 
+function [] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+
+
+end

@@ -1,4 +1,4 @@
-%%% Data Wirting File
+%%% Data Wirting Script
 
 function[] = DataWriting(PeDataNoCode, PeDataCode)
 
