@@ -14,12 +14,14 @@
 % up of. 
 
 function [] = main(MonteCarlo, NumMessages, BitPerMessage)
+
 fprintf('\n*************\n');
 PeDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitPerMessage);
 
-
+fprintf('\n*************\n');
 PeDataCode = ChannelCod(MonteCarlo, NumMessages, BitPerMessage);
 
+fprintf('\n*************\n');
 DataWriting(PeDataNoCode, PeDataCode);
 
 end
