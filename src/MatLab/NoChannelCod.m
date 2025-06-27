@@ -4,9 +4,8 @@
 % on a non coded channel. 
 
 % This analysis will be conducted to better comprehend Convolutional Coding
-% strategies effect on the system's performance comparing results with a
-% coded channel.
-
+% strategies effect on the system's performance comparing its results with 
+% the ones produced by a coded channel.
 
 function [] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 

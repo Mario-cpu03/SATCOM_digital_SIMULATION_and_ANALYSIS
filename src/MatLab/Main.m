@@ -13,7 +13,10 @@
 % command to the Rx base. The Rx will answer with a state message as soon 
 % as the command is executed succesfully or failed. The Txbase  will send an Ack
 % message to confirm it has received the answer and close the
-% communication.
+% communication. The geostationary satellite will act as a relay.
+% From now on, the term "communication" will refer to the process of
+% transmitting all three messages and, in this context, will be used as
+% a synonym for "simulation".
 
 % "Bit*" is the data dimension in bit for every message. We'll suppose a Tx text
 % message of medium-low size (512 bit), an Rx state message of 256 bit and a
