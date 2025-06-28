@@ -21,7 +21,7 @@
 % The channel is not a lossless one, in fact AWGN, Thermal Noise and
 % Atmospheric Attenuation will be summed up on the transmitted signal.
 
-function [BER, THROUGHPUT, ] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER, SNR] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -197,7 +197,9 @@ for (i = 1:MonteCarlo)
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode3 = PTransSat3 * Gter * Gsat * 10^(-(Lback/10));
     SNRlinear = PReceivedNode3/PNoiseAck;
+    disp(SNR)
     SNRack=10*log10(SNRlinear);
+    fprintf("AO:"); disp(SNRack);
 
     % Loss + Noise on signals Node
     modSignalCommandNode = awgn(modSignalCommandSat, SNRc, PTransSat1);

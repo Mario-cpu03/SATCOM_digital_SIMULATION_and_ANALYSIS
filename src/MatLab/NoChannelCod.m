@@ -118,7 +118,7 @@ for (i = 1:MonteCarlo)
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
-    PReceivedSat1 = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
+    PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
     SNRlinear = PReceivedSat1/PNoiseC;
     SNRc=10*log10(SNRlinear);
 
@@ -128,7 +128,7 @@ for (i = 1:MonteCarlo)
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
-    PReceivedSat2 = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
+    PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
     SNRlinear = PReceivedSat2/PNoiseAns;
     SNRans=10*log10(SNRlinear);
 
@@ -138,7 +138,7 @@ for (i = 1:MonteCarlo)
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
-    PReceivedSat3 = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
+    PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
     SNRlinear = PReceivedSat3/PNoiseAck;
     SNRack=10*log10(SNRlinear);
 
@@ -175,7 +175,7 @@ for (i = 1:MonteCarlo)
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
-    PReceivedNode1 = PTransSat1 * Gter * Gsat * 10^(-(Lback/10));
+    PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback/10));
     SNRlinear = PReceivedNode1/PNoiseC;
     SNRc=10*log10(SNRlinear);
 
@@ -185,7 +185,7 @@ for (i = 1:MonteCarlo)
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
-    PReceivedNode2 = PTransSat2 * Gter * Gsat * 10^(-(Lback/10));
+    PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
     SNRlinear = PReceivedNode2/PNoiseAns;
     SNRans=10*log10(SNRlinear);
 
@@ -195,7 +195,7 @@ for (i = 1:MonteCarlo)
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
-    PReceivedNode3 = PTransSat3 * Gter * Gsat * 10^(-(Lback/10));
+    PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
     SNRlinear = PReceivedNode3/PNoiseAck;
     SNRack=10*log10(SNRlinear);
 
