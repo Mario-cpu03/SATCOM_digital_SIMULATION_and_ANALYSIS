@@ -73,10 +73,10 @@ PnDw = k * Temp * Bdw;
 Ptrans = 25;
 
 % Gain satellite antenna in dBi
-Gsat = 42;
+Gsat = 30;
 
 % Gain terrestrial military bases in dBi
-Gter = 47;
+Gter = 40;
 
 % Performance Parameters init
 BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); 
@@ -119,8 +119,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
-    SNRlinear = PReceivedSat1/PNoiseC;
-    SNRc=10*log10(SNRlinear);
+    SNRlinear1 = PReceivedSat1/PNoiseC;
+    SNRc=10*log10(SNRlinear1);
 
     % Loss Node->Sat in dB
     T = unifrnd(270,310); 
@@ -129,8 +129,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
-    SNRlinear = PReceivedSat2/PNoiseAns;
-    SNRans=10*log10(SNRlinear);
+    SNRlinear2 = PReceivedSat2/PNoiseAns;
+    SNRans=10*log10(SNRlinear2);
 
     % Loss Node->Sat in dB
     T = unifrnd(270,310); 
@@ -139,20 +139,20 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
-    SNRlinear = PReceivedSat3/PNoiseAck;
-    SNRack=10*log10(SNRlinear);
+    SNRlinear3 = PReceivedSat3/PNoiseAck;
+    SNRack=10*log10(SNRlinear3);
 
     % Loss + Noise on signals Sat
-    modSignalCommandSat = awgn(modSignalCommand, SNRc, Ptrans);
-    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, Ptrans);
-    modSignalAckSat = awgn(modSignalAck, SNRack, Ptrans);
+    modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
+    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, "measured");
+    modSignalAckSat = awgn(modSignalAck, SNRack, "measured");
 
 
     %%Satellite Relay amplification
-    PTransSat1 = PReceivedSat1 * Gsat;
-    PTransSat2 = PReceivedSat2 * Gsat;
-    PTransSat3 = PReceivedSat3 * Gsat;
-    % disp(PTransSat1); disp(PTransSat2); disp(PTransSat3); %PRINT TO CHECK
+    PTransSat1 = PReceivedSat1 * 10^(Gsat/10);
+    PTransSat2 = PReceivedSat2 * 10^(Gsat/10);
+    PTransSat3 = PReceivedSat3 * 10^(Gsat/10);
+    %disp(PTransSat1); disp(PTransSat2); disp(PTransSat3); %PRINT TO CHECK
 
 
     %---------------------------------------------------------------------%
@@ -161,6 +161,7 @@ for (i = 1:MonteCarlo)
     %%Receiving Signals on Earth
     
     % Thermal Noise Sat->Node
+    NoiseStd = sqrt(PnDw);
     ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
     PNoiseC = mean(abs(ThermalNoiseC).^2);
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
@@ -176,8 +177,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback/10));
-    SNRlinear = PReceivedNode1/PNoiseC;
-    SNRc=10*log10(SNRlinear);
+    SNRlinear1back = PReceivedNode1/PNoiseC;
+    SNRc=10*log10(SNRlinear1back);
 
     % Loss Sat->Node in dB
     T = unifrnd(270,310); 
@@ -186,8 +187,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
-    SNRlinear = PReceivedNode2/PNoiseAns;
-    SNRans=10*log10(SNRlinear);
+    SNRlinear2back = PReceivedNode2/PNoiseAns;
+    SNRans=10*log10(SNRlinear2back);
 
     % Loss Sat->Node in dB
     T = unifrnd(270,310); 
@@ -196,17 +197,18 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
-    SNRlinear = PReceivedNode3/PNoiseAck;
-    SNRack=10*log10(SNRlinear);
+    SNRlinear3back = PReceivedNode3/PNoiseAck;
+    SNRack=10*log10(SNRlinear3back);
 
     % Loss + Noise on signals Node
-    modSignalCommandNode = awgn(modSignalCommandSat, SNRc, PTransSat1);
-    modSignalAnswerNode = awgn(modSignalAnswerSat, SNRans, PTransSat2);
-    modSignalAckNode = awgn(modSignalAckSat, SNRack, PTransSat3);
+    modSignalCommandNode = awgn(modSignalCommandSat, SNRc, "measured");
+    modSignalAnswerNode = awgn(modSignalAnswerSat, SNRans, "measured");
+    modSignalAckNode = awgn(modSignalAckSat, SNRack, "measured");
 
 
     %%Demodulation and choice (minimum distance)
-    demodSignalCommand = pskdemod(modSignalCommandNode,4);
+
+    demodSignalCommand = pskdemod(modSignalCommandNode,4); 
     demodSignalAnswer = pskdemod(modSignalAnswerNode,4);
     demodSignalAck = pskdemod(modSignalAckNode,4);
 
