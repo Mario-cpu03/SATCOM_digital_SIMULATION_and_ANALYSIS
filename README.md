@@ -20,7 +20,7 @@ If you're just interested in the analysis results, then visit "./results/" and "
 If you want to test the source code:
 1. Clone the repository:
     ```bash
-    git clone https://github.com/Mario-cpu03/Regression_Analysis.git
+    git clone https://github.com/Mario-cpu03/ATCOM_digital_SIMULATION_and_ANALYSIS.git
     ```
 2. Open the project in MATLAB.
 3. Run the scripts in the `src/MatLab` folder to perform the simulation.
