@@ -96,11 +96,14 @@ for (i = 1:MonteCarlo)
     NANS = length(modSignalAnswer);
     NACK = length(modSignalAck);
     NoiseStd = sqrt(PnUp);   
-    
+
     % Thermal Noise
     ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
+    PNoiseC = mean(abs(ThermalNoiseC).^2);
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
+    PNoiseAns = mean(abs(ThermalNoiseAns).^2);
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    PNoiseAck = mean(abs(ThermalNoiseAck).^2);
 
     % SNR received without AWGN
     % Loss Node->Sat in dB
@@ -110,7 +113,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat1 = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
-    SNRlinear = PReceivedSat1/ThermalNoiseC;
+    SNRlinear = PReceivedSat1/PNoiseC;
     SNRc=10*log10(SNRlinear);
 
     % Loss Node->Sat in dB
@@ -120,7 +123,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat2 = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
-    SNRlinear = PReceivedSat2/ThermalNoiseAns;
+    SNRlinear = PReceivedSat2/PNoiseAns;
     SNRans=10*log10(SNRlinear);
 
     % Loss Node->Sat in dB
@@ -130,20 +133,20 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat3 = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
-    SNRlinear = PReceivedSat3/ThermalNoiseAck;
+    SNRlinear = PReceivedSat3/PNoiseAck;
     SNRack=10*log10(SNRlinear);
 
     % Loss on signals
-    modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
-    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, "measured");
-    modSignalAckSat = awgn(modSignalAck, SNRack, "measured");
+    modSignalCommandSat = awgn(modSignalCommand, SNRc, Ptrans);
+    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, Ptrans);
+    modSignalAckSat = awgn(modSignalAck, SNRack, Ptrans);
 
 
     %%Satellite Relay amplification
     PTransSat1 = PReceivedSat1 * Gsat;
     PTransSat2 = PReceivedSat2 * Gsat;
     PTransSat3 = PReceivedSat3 * Gsat;
-
+    % disp(PTransSat1); disp(PTransSat2); disp(PTransSat3); % PRINT TO CHECK
 
     %%Receiver demodulation and choice
     
