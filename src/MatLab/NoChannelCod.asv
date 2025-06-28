@@ -52,21 +52,30 @@ freqback = 8e9;
 
 %% Thermal Noise construction
 
-%Boltzmann Constant
+% Boltzmann Constant
 k = 1.38e-23;
-%
-T = 290;                
-B = 10e6;               % Banda del canale [Hz] (es. 10 MHz)
-Pn = k * T * B;   
+% Kelvin Temperature
+T = 290;
+% Channel band uplink
+Bup = 10e9; 
+% Channel band downlink
+Bdw = 8e9;
+% Noise Power uplink
+PnUp = k * T * Bup;   
+% Noise Power downlink
+PnDw = k * T * Bdw;
 
 
-%% MonteCarlo communications simulation
+%% MonteCarlo times communication simulation
+
+% Transimission Power in Watt
+Ptrans= 25;
 
 for (i = 1:MonteCarlo)
 
     %%Messages random generation:
     Command = randi([0,1],1,BitTx); 
-    Answer = randi([0,1],1,BitRx)
+    Answer = randi([0,1],1,BitRx);
     Ack = randi([0,1],1,BitAck);
     
     %%Modulation
@@ -74,28 +83,32 @@ for (i = 1:MonteCarlo)
     modSignalAnswer = pskmod(Answer,4);
     modSignalAck = pskmod(Ack,4);
     
-    %%Transmission on the channel towards the satellite
-    NC = length(modSignalCommand);
-    NANS = length(modSignalAnswer);
-    NACK = length(modSignalAck);
-    NoiseStd = sqrt(Pn);   
-    % Thermal Noise
-    ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
-    ThermalNoiseAns = 
-    ThermalNoiseAck = 
-    % Loss on signals
-    modSignalCommandSat = modSignalCommand + 
-    modSignalAnswerSat = 
-    modSignalAckSat = 
-
-    %%Satellite Relay amplification
-
-
     %%Atmospheric Losses - random variables construction:
     % Loss Node->Sat in dB
     Lsend = gaspl(range,freqsend,T,P,Den);
     % Loff Sat->Node in dB
     Lback = gaspl(range,freqback,T,P,Den);
+
+    %%Transmission on the channel towards the satellite
+    NC = length(modSignalCommand);
+    NANS = length(modSignalAnswer);
+    NACK = length(modSignalAck);
+    NoiseStd = sqrt(PnUp);   
+    % Thermal Noise
+    ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
+    ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
+    ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    % Loss on signals
+    SNR = randi([0,20], 1);
+    modSignalCommandSat = modSignalCommand + ThermalNoiseC + Lsend + awgn(modSignalCommand, SNR, 'measured'); %INSERT AWGN
+    SNR = randi([0,20], 1);
+    modSignalAnswerSat = modSignalAnswer + ThermalNoiseAns + Lsend + awgn(modSignalAnswer, SNR, 'measured');
+    SNR = randi([0,20], 1);
+    modSignalAckSat = modSignalAck + ThermalNoiseAck + Lsend + awgn(modSignalAck, SNR, 'measured');
+
+
+    %%Satellite Relay amplification
+    
 
 end
 

@@ -68,6 +68,15 @@ PnDw = k * T * Bdw;
 
 %% MonteCarlo times communication simulation
 
+% Transimission Power in Watt
+Ptrans = 25;
+
+% Gain satellite antenna in dB
+G = 42;
+
+% Power after Relay Amplification
+Pampl = G*PRec;
+
 for (i = 1:MonteCarlo)
 
     %%Messages random generation:
@@ -96,12 +105,16 @@ for (i = 1:MonteCarlo)
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
     % Loss on signals
-    modSignalCommandSat = modSignalCommand + ThermalNoiseC + Lsend; %INSERT AWGN
-    modSignalAnswerSat = modSignalAnswer + ThermalNoiseAns + Lsend;
-    modSignalAckSat = modSignalAck + ThermalNoiseAck + Lsend;
+    SNR = randi([0,20], 1);
+    modSignalCommandSat = modSignalCommand + ThermalNoiseC + Lsend + awgn(modSignalCommand, SNR, Ptrans);
+    SNR = randi([0,20], 1);
+    modSignalAnswerSat = modSignalAnswer + ThermalNoiseAns + Lsend + awgn(modSignalAnswer, SNR, Ptrans);
+    SNR = randi([0,20], 1);
+    modSignalAckSat = modSignalAck + ThermalNoiseAck + Lsend + awgn(modSignalAck, SNR, Ptrans);
+    disp(modSignalCommandSat)
 
     %%Satellite Relay amplification
-
+    
 
 end
 

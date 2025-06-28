@@ -25,9 +25,8 @@
 % Data dimensions and Modulation schema (QPSK) are chosen as defined in the 
 % MIL-STD-188 protocol.
 
-% Transmissive Power per Link will not be fixed, due to the needs of perfomance
-% evaluation, and it's value will vary according to MIL-STD-188 protocol
-% between 1W and 50W.
+% Transmissive Power per Link will be fixed, according to MIL-STD-188 
+% protocol, and its value will be the median between 1W and 50W: 25W.
 
 % Frequency Band choice, one more time accordingly with the chosen
 % protocol, is an SHF X-band (10GHz uplink and 8GHz downlink)
@@ -43,24 +42,24 @@ NumMessages = 3;
 BitTx = 512; BitRx = 256; BitAck = 8;
 
 
-%% Start Simulation with Convolution Coding
-
-fprintf('\n*************\n');
-BerDataCode = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
-fprintf('\n*************\n');
-
-
 %% Start Simulation without Convolution Coding
 
 fprintf('\n*************\n');
-BerDataNoCode = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+fprintf('\n*************\n');
+
+
+%% Start Simulation with Convolution Coding
+
+fprintf('\n*************\n');
+ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
 fprintf('\n*************\n');
 
 
 %% Data Persistence Logic
 
 fprintf('\n*************\n');
-DataWriting(BerDataNoCode, BerDataCode);
+%DataWriting(BerDataNoCode, BerDataCode);
 fprintf('\n*************\n');
 
 end
