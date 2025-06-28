@@ -88,12 +88,6 @@ for (i = 1:MonteCarlo)
     modSignalCommand = pskmod(Command,4);
     modSignalAnswer = pskmod(Answer,4);
     modSignalAck = pskmod(Ack,4);
-    
-    %%Atmospheric Losses - random variables construction:
-    % Loss Node->Sat in dB
-    Lsend = gaspl(range,freqsend,T,P,Den);
-    % Loff Sat->Node in dB
-    Lback = gaspl(range,freqback,T,P,Den);
 
     %%Transmission on the channel towards the satellite
     NC = length(modSignalCommand);
@@ -104,18 +98,28 @@ for (i = 1:MonteCarlo)
     ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    
     % SNR received without AWGN
+    % Loss Node->Sat in dB
+    Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
     SNRlinear = PReceivedSat/ThermalNoiseC;
-    SNR=10*log10(SNRlinear);
+    SNRc=10*log10(SNRlinear);
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
+    SNRlinear = PReceivedSat/ThermalNoiseAns;
+    SNRans=10*log10(SNRlinear);
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
+    SNRlinear = PReceivedSat/ThermalNoiseAck;
+    SNRack=10*log10(SNRlinear);
     % Loss on signals
-    modSignalCommandSat = awgn(modSignalCommand, SNR, "measured");
-    modSignalAnswerSat = awgn(modSignalAnswer, SNR, "measured");
-    modSignalAckSat = awgn(modSignalAck, SNR, "measured");
-    disp(modSignalCommandSat)
+    modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
+    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, "measured");
+    modSignalAckSat = awgn(modSignalAck, SNRack, "measured");
 
     %%Satellite Relay amplification
-    
+    PTransSat = PReceivedSat 
 
 end
 
