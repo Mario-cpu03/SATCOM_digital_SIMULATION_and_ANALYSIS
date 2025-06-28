@@ -45,14 +45,15 @@ BitTx = 512; BitRx = 256; BitAck = 8;
 %% Start Simulation without Convolution Coding
 
 fprintf('\n*************\n');
-NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+[BERNoCode, THROUGHPUTNoCode, PERNoCode, SNRNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+disp(BERNoCode); disp(THROUGHPUTNoCode); disp(PERNoCode); disp(SNRNoCode);
 fprintf('\n*************\n');
 
 
 %% Start Simulation with Convolution Coding
 
 fprintf('\n*************\n');
-ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+[BERCode, THROUGHPUTCode, PERCode, SNRCode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
 fprintf('\n*************\n');
 
 
