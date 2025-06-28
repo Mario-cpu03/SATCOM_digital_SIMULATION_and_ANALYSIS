@@ -71,11 +71,11 @@ PnDw = k * T * Bdw;
 % Transimission Power in Watt
 Ptrans = 25;
 
-% Gain satellite antenna in dB
-G = 42;
+% Gain satellite antenna in dBi
+Gsat = 42;
+% Gain terrestrial military bases in dBi
+Gter = 47;
 
-% Power after Relay Amplification
-Pampl = G*PRec;
 
 for (i = 1:MonteCarlo)
 
@@ -104,14 +104,18 @@ for (i = 1:MonteCarlo)
     ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    % SNR received without AWGN
+    PReceivedSat = Ptrans * Gter * Gsat * 10^(-(Lsend/10));
+    SNRlinear = PReceivedSat/ThermalNoiseC;
+    SNRc=10*log10(SNRlinear);
+    SNRlinear = PReceivedSat/ThermalNoiseAns;
+    SNRans=10*log10(SNRlinear);
+    SNRlinear = PReceivedSat/ThermalNoiseAck;
+    SNRack=10*log10(SNRlinear);
     % Loss on signals
-    SNR = randi([0,20], 1);
-    modSignalCommandSat = modSignalCommand + ThermalNoiseC + Lsend + awgn(modSignalCommand, SNR, Ptrans);
-    SNR = randi([0,20], 1);
-    modSignalAnswerSat = modSignalAnswer + ThermalNoiseAns + Lsend + awgn(modSignalAnswer, SNR, Ptrans);
-    SNR = randi([0,20], 1);
-    modSignalAckSat = modSignalAck + ThermalNoiseAck + Lsend + awgn(modSignalAck, SNR, Ptrans);
-    disp(modSignalCommandSat)
+    modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
+    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, "measured");
+    modSignalAckSat = awgn(modSignalAck, SNRack, "measured");
 
     %%Satellite Relay amplification
     
