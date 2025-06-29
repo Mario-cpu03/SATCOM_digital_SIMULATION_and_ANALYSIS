@@ -10,7 +10,7 @@
 % implementation of a coded channel.
 
 % A persistence logic will be developed such that resulting png(s) will be
-% saved in a dedicated directory ("../../results/"). 
+% saved in a dedicated directory ("../../results/cc-nc_COMPARISON/"). 
 
 function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc)
 %% BER plot
@@ -48,8 +48,8 @@ ylim([0 max([PERnc, PERcc])*1.1]);
 
 %% Data Persistence Logic
 
-saveas(f1, '../../results/BER_Improvements.png');
-saveas(f2, '../../results/THROUGHPUT_Improvements.png');
-saveas(f3, '../../results/PER_Improvements.png');
+saveas(f1, '../../results/cc-nc_COMPARISON/BER_Improvements.png');
+saveas(f2, '../../results/cc-nc_COMPARISON/THROUGHPUT_Improvements.png');
+saveas(f3, '../../results/cc-nc_COMPARISON/PER_Improvements.png');
 
 end
