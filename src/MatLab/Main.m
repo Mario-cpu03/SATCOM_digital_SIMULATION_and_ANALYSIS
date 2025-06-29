@@ -48,8 +48,10 @@ BitTx = 512; BitRx = 256; BitAck = 8;
 %% Start Simulation without Convolution Coding
 
 fprintf('\n*************\n');
-%[BERNoCode, THROUGHPUTNoCode, PERNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
-%disp(mean(BERNoCode)); disp(mean(THROUGHPUTNoCode)); disp(mean(PERNoCode))
+[BERNoCode, THROUGHPUTNoCode, PERNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+fprintf("\nMean BER on a non coded channel:"); disp(mean(BERNoCode));
+fprintf("\nMean Effective Throughput on a non coded channel:"); disp(mean(THROUGHPUTNoCode));
+fprintf("\nMean PER on a non coded channel:");  disp(mean(PERNoCode))
 fprintf('\n*************\n');
 
 
@@ -57,8 +59,36 @@ fprintf('\n*************\n');
 
 fprintf('\n*************\n');
 [BERCode, THROUGHPUTCode, PERCode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
-disp(mean(BERCode)); disp(mean(THROUGHPUTCode)); disp(mean(PERCode))
+fprintf("\nMean BER on a convolutional coded channel:"); disp(mean(BERCode)); 
+fprintf("\nMean Effective Throughput on a convolutional coded channel:"); disp(mean(THROUGHPUTCode)); 
+fprintf("\nMean PER on a convolutional coded channel:"); disp(mean(PERCode))
 fprintf('\n*************\n');
+
+
+BER_nc = mean(BERNoCode)                % BER non codificato
+THR_nc = mean(THROUGHPUTNoCode);        % Throughput non codificato
+PER_nc = mean(PERNoCode);                        % PER non codificato
+
+BER_cc = mean(BERCode);    % BER codificato
+THR_cc = mean(THROUGHPUTCode)        % Throughput codificato
+PER_cc = mean(PERCode);       % PER codificato
+
+% Valori e categorie
+metrics = {'BER', 'Throughput', 'PER'};
+nc_values = [BER_nc, THR_nc, PER_nc];
+cc_values = [BER_cc, THR_cc, PER_cc];
+
+% Crea il grafico comparativo
+figure;
+bar([nc_values; cc_values]', 0.5);
+set(gca, 'XTickLabel', metrics);
+legend('Non Coded', 'Coded', 'Location', 'northoutside', 'Orientation','horizontal');
+title('Performance Comparison - Non Coded vs Convolutionally Coded Channel');
+ylabel('Metric Value');
+grid on;
+
+% Visualizzazione migliorata
+ylim([0 max([nc_values cc_values])*1.1]);
 
 
 %% Data Persistence Logic

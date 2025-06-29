@@ -21,9 +21,9 @@
 % transmitting all three messages and, in this context, will be used as
 % a synonym for "simulation".
 
-% "Bit*" is the data dimension in bit for every message. We'll suppose a Tx text
-% message of medium-low size (512 bit), an Rx state message of 256 bit and a
-% 8 bit Tx Acknowledgement message.
+% "Bit*" is the data dimension in bit for every message. 
+% We'll suppose a Tx text message of 512 bit (medium-low size), 
+% an Rx state message of 256 bit and an 8 bit Tx Acknowledgement.
 
 % Data dimensions and Modulation schema (QPSK) are chosen as defined in the 
 % MIL-STD-188 protocol.
@@ -32,11 +32,11 @@
 % protocol, and its value will be the median between 1W and 50W: 25W.
 
 % Frequency Band choice, one more time accordingly with the chosen
-% protocol, is an SHF X-band (10GHz uplink and 8GHz downlink)
+% protocol, is an SHF X-band (8.2GHz uplink and 7.5GHz downlink)
 
-% System's performance will be evaluated using mostly BER and effective
-% Throughput. Other performance parameters will be PER and SNR, but their
-% role will be a marginal one.
+% System's performance will be evaluated using mostly BER (Bit Error Rate) 
+% and Effective Throughput. 
+% A secondary performance parameter will be PER (Packet Error Rate).
 
 function [] = Main(MonteCarlo)
 %% Init Parameters
@@ -49,8 +49,9 @@ BitTx = 512; BitRx = 256; BitAck = 8;
 
 fprintf('\n*************\n');
 [BERNoCode, THROUGHPUTNoCode, PERNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
-%disp(transpose(BERNoCode)); disp(transpose(THROUGHPUTNoCode)); disp(transpose(PERNoCode));
-disp(mean(BERNoCode)); disp(mean(THROUGHPUTNoCode)); disp(mean(PERNoCode))
+fprintf("\nMean BER on a non coded channel:"); disp(mean(BERNoCode));
+fprintf("\nMean Effective Throughput on a non coded channel:"); disp(mean(THROUGHPUTNoCode));
+fprintf("\nMean PER on a non coded channel:");  disp(mean(PERNoCode))
 fprintf('\n*************\n');
 
 
@@ -58,6 +59,9 @@ fprintf('\n*************\n');
 
 fprintf('\n*************\n');
 [BERCode, THROUGHPUTCode, PERCode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+frpintf("\nMean BER on a convolutional coded channel:"); disp(mean(BERCode)); 
+frpintf("\nMean BER on a convolutional coded channel:"); disp(mean(THROUGHPUTCode)); 
+frpintf("\nMean BER on a convolutional coded channel:"); disp(mean(PERCode))
 fprintf('\n*************\n');
 
 

@@ -231,11 +231,13 @@ for (i = 1:MonteCarlo)
     demodSignalAnswerCoded = pskdemod(modSignalAnswerNode,4,pi/4);
     demodSignalAckCoded = pskdemod(modSignalAckNode,4,pi/4);
     
-    demodSignalCommand = vitdec(demodSignalCommandCoded, trellis, tracebackLength, 'hard', 'trunc');
-    demodSignalAnswer = vitdec(demodSignalAnswerCoded, trellis, tracebackLength, 'hard', 'trunc');
-    demodSignalAck = vitdec(demodSignalAckCoded, trellis, tracebackLength, 'hard', 'trunc');
-
-
+    %demodSignalCommand = vitdec(demodSignalCommandCoded, trellis, tracebackLength, 'hard', 'trunc');
+    %demodSignalAnswer = vitdec(demodSignalAnswerCoded, trellis, tracebackLength, 'hard', 'trunc');
+    %demodSignalAck = vitdec(demodSignalAckCoded, trellis, tracebackLength, 'hard', 'trunc');
+    demodSignalCommand = viterbiDecodeCustom(demodSignalCommandCoded);
+    demodSignalAnswer = viterbiDecodeCustom(demodSignalAnswerCoded);
+    demodSignalAck = viterbiDecodeCustom(demodSignalAckCoded);
+    
     %---------------------------------------------------------------------%
 
     
@@ -259,4 +261,60 @@ for (i = 1:MonteCarlo)
 
 end
 
+end
+
+
+function decodedBits = viterbiDecodeCustom(receivedBits)
+    % Parametri del codificatore
+    k = 1; % bit input
+    n = 2; % bit output
+    constraintLength = 3;
+    numStates = 2^(constraintLength - 1);
+    
+    % Trellis
+    trellis = poly2trellis(constraintLength, [7 5]); % standard MIL-STD-188
+    
+    % Numero di simboli
+    numInputBits = length(receivedBits) / n;
+    
+    % Inizializzazione metriche e path
+    pathMetric = inf(numStates, numInputBits+1);
+    pathMetric(1,1) = 0;
+    path = zeros(numStates, numInputBits);
+
+    % Decodifica passo-passo
+    for t = 1:numInputBits
+        receivedSymbol = receivedBits((t-1)*n+1 : t*n);
+
+        for state = 0:numStates-1
+            for inputBit = 0:1
+                prevState = trellis.nextStates(state+1, inputBit+1);
+                expectedOutput = de2bi(trellis.outputs(state+1, inputBit+1), n, 'left-msb');
+
+                % Calcola distanza di Hamming (hard decision)
+                hammingDist = sum(xor(receivedSymbol, expectedOutput));
+
+                % Aggiorna metrica se più bassa
+                if pathMetric(state+1, t) + hammingDist < pathMetric(prevState+1, t+1)
+                    pathMetric(prevState+1, t+1) = pathMetric(state+1, t) + hammingDist;
+                    path(prevState+1, t) = state;
+                end
+            end
+        end
+    end
+
+    % Backtracking per trovare il path migliore
+    decodedBits = zeros(1, numInputBits);
+    [~, state] = min(pathMetric(:, end));
+
+    for t = numInputBits:-1:1
+        prevState = path(state, t);
+        for inputBit = 0:1
+            if trellis.nextStates(prevState+1, inputBit+1) == state - 1
+                decodedBits(t) = inputBit;
+                break;
+            end
+        end
+        state = prevState + 1;
+    end
 end
