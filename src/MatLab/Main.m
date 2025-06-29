@@ -47,15 +47,14 @@ BitTx = 512; BitRx = 256; BitAck = 8;
 fprintf('\n*************\n');
 [BERNoCode, THROUGHPUTNoCode, PERNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
 %disp(transpose(BERNoCode)); disp(transpose(THROUGHPUTNoCode)); %disp(PERNoCode);
-mean(BERNoCode)
-mean(THROUGHPUTNoCode)
+disp(mean(BERNoCode)); disp(mean(THROUGHPUTNoCode));
 fprintf('\n*************\n');
 
 
 %% Start Simulation with Convolution Coding
 
 fprintf('\n*************\n');
-[BERCode, THROUGHPUTCode, PERCode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+%[BERCode, THROUGHPUTCode, PERCode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
 fprintf('\n*************\n');
 
 
