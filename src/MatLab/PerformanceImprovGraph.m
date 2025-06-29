@@ -10,7 +10,11 @@
 % implementation of a coded channel.
 
 % A persistence logic will be developed such that resulting png(s) will be
-% saved in a dedicated directory ("../../results/cc-nc_COMPARISON/"). 
+% saved in a dedicated directory ("../../results/cc-nc_COMPARISON/").
+
+% Moreover, a .txt file containing MonteCarlo meaned values of SNR,
+% Atmospheric Loss (Up and Down) and all of the other output parametrs of
+% ChannelCod.m and NoChannelCod.m files.
 
 function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc)
 %% BER plot
@@ -48,8 +52,15 @@ ylim([0 max([PERnc, PERcc])*1.1]);
 
 %% Data Persistence Logic
 
+% graphs
 saveas(f1, '../../results/cc-nc_COMPARISON/BER_Improvements.png');
 saveas(f2, '../../results/cc-nc_COMPARISON/THROUGHPUT_Improvements.png');
 saveas(f3, '../../results/cc-nc_COMPARISON/PER_Improvements.png');
 
+% txt file
+fid = fopen('../../results/cc-nc_COMPARISON/Mean-Parameters_COMPARISON.txt', 'w');
+fprintf(fid, 'Summary of simulated results.\n\n');
+fprintf(fid, 'Simulation 1 - No Convolutional Coding Techniques:\n');
+
+fprintf(fid, '\nSimulation 2 - Convolutional Coding Techniques:\n');
 end
