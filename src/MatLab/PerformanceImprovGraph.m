@@ -14,6 +14,7 @@
 
 function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc)
 %% BER plot
+
 f1 = figure;
 bar([BERnc, BERcc], 0.4);
 set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
@@ -24,6 +25,7 @@ ylim([0 max([BERnc, BERcc])*1.1]);
 
 
 %% Throughput plot
+
 f2 = figure;
 bar([THRnc, THRcc], 0.4);
 set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
@@ -34,6 +36,7 @@ ylim([0 1]);
 
 
 %% PER plot
+
 f3 = figure;
 bar([PERnc, PERcc], 0.4);
 set(gca, 'XTickLabel', {'Non Coded', 'Coded'});

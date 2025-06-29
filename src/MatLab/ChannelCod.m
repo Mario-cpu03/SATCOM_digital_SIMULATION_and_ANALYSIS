@@ -27,7 +27,7 @@
 % frequencies.
 % For simplicity, scintillation effects will not be considered.
 
-function [BER, THROUGHPUT, PER] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER, AWGN, ATMLOSSup, ATMLOSSdw, TEMPERATURE, DENSITY, THERMALNOISE] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -83,10 +83,14 @@ Gter = 40;
 % Coding parameters
 constraintLength = 3;
 trellis = poly2trellis(constraintLength, [7 5]);
-tracebackLength= 5*constraintLength;
+%tracebackLength= 5*constraintLength;
 
 % Performance Parameters init
 BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCarlo,1);
+
+% Other Parameters init
+AWGN = zeros(MonteCarlo,1); ATMLOSSup = zeros(MonteCarlo,1); ATMLOSSdw = zeros(MonteCarlo,1);
+TEMPERATURE = zeros(MonteCarlo,1); DENSITY = zeros(MonteCarlo,1); THERMALNOISE = zeros(MonteCarlo,1);
 
 for (i = 1:MonteCarlo)
     
@@ -231,9 +235,12 @@ for (i = 1:MonteCarlo)
     demodSignalAnswerCoded = pskdemod(modSignalAnswerNode,4,pi/4);
     demodSignalAckCoded = pskdemod(modSignalAckNode,4,pi/4);
     
+    % AN ALTERNATIVE VERSION OF DECODING CAN BE EXECUTED UNCOMMENTING THE
+    % FOLLOWING THREE LINES AND COMMENTING LINES 244-246.
     %demodSignalCommand = vitdec(demodSignalCommandCoded, trellis, tracebackLength, 'hard', 'trunc');
     %demodSignalAnswer = vitdec(demodSignalAnswerCoded, trellis, tracebackLength, 'hard', 'trunc');
     %demodSignalAck = vitdec(demodSignalAckCoded, trellis, tracebackLength, 'hard', 'trunc');
+
     demodSignalCommand = viterbiDecodeCustom(demodSignalCommandCoded);
     demodSignalAnswer = viterbiDecodeCustom(demodSignalAnswerCoded);
     demodSignalAck = viterbiDecodeCustom(demodSignalAckCoded);

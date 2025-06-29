@@ -25,7 +25,7 @@
 
 % Note: Scintillation effects are neglected in this model.
 
-function [BER, THROUGHPUT, PER] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER, AWGN, ATMLOSSup, ATMLOSSdw, TEMPERATURE, DENSITY, THERMALNOISE] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -81,6 +81,9 @@ Gter = 40;
 % Performance Parameters init
 BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCarlo,1);
 
+% Other Parameters init
+AWGN = zeros(MonteCarlo,1); ATMLOSSup = zeros(MonteCarlo,1); ATMLOSSdw = zeros(MonteCarlo,1); 
+TEMPERATURE = zeros(MonteCarlo,1); DENSITY = zeros(MonteCarlo,1); THERMALNOISE = zeros(MonteCarlo,1);
 
 for (i = 1:MonteCarlo)
 
@@ -246,6 +249,14 @@ for (i = 1:MonteCarlo)
     PERack = any(Ack ~= demodSignalAck);
 
     PER(i,:) = (PERcommand + PERanswer + PERack)/NumMessages;
+
+    % Meaned AWGN
+    AWGN(i,:) = (NoiseAwgn1 + NoiseAwgn2 + NoiseAwgn3 + ...
+                NoiseAwgnBack1 + NoiseAwgnBack2 + NoiseAwgnBack3)...
+                /(2*NumMessages);
+
+    % Meaned ATMLOSS
+
 
 end
 
