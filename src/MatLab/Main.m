@@ -64,22 +64,22 @@ fprintf("\nMean Effective Throughput on a convolutional coded channel:"); disp(m
 fprintf("\nMean PER on a convolutional coded channel:"); disp(mean(PERCode))
 fprintf('\n*************\n');
 
+%% A simple Graphic evaluation
 
-BER_nc = mean(BERNoCode)                % BER non codificato
-THR_nc = mean(THROUGHPUTNoCode);        % Throughput non codificato
-PER_nc = mean(PERNoCode);                        % PER non codificato
+BER_nc = mean(BERNoCode);               
+THR_nc = mean(THROUGHPUTNoCode);        
+PER_nc = mean(PERNoCode);          
 
-BER_cc = mean(BERCode);    % BER codificato
-THR_cc = mean(THROUGHPUTCode)        % Throughput codificato
-PER_cc = mean(PERCode);       % PER codificato
+BER_cc = mean(BERCode);    
+THR_cc = mean(THROUGHPUTCode);
+PER_cc = mean(PERCode);     
 
-% Valori e categorie
 metrics = {'BER', 'Throughput', 'PER'};
 nc_values = [BER_nc, THR_nc, PER_nc];
 cc_values = [BER_cc, THR_cc, PER_cc];
 
-% Crea il grafico comparativo
 figure;
+
 bar([nc_values; cc_values]', 0.5);
 set(gca, 'XTickLabel', metrics);
 legend('Non Coded', 'Coded', 'Location', 'northoutside', 'Orientation','horizontal');
@@ -87,7 +87,6 @@ title('Performance Comparison - Non Coded vs Convolutionally Coded Channel');
 ylabel('Metric Value');
 grid on;
 
-% Visualizzazione migliorata
 ylim([0 max([nc_values cc_values])*1.1]);
 
 
