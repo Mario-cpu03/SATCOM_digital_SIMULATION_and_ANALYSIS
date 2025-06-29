@@ -66,28 +66,42 @@ fprintf('\n*************\n');
 
 %% A simple Graphic evaluation
 
-BER_nc = mean(BERNoCode);               
-THR_nc = mean(THROUGHPUTNoCode);        
-PER_nc = mean(PERNoCode);          
+BERnc = mean(BERNoCode);               
+THRnc = mean(THROUGHPUTNoCode);        
+PERnc = mean(PERNoCode);          
 
-BER_cc = mean(BERCode);    
-THR_cc = mean(THROUGHPUTCode);
-PER_cc = mean(PERCode);     
+BERcc = mean(BERCode);    
+THRcc = mean(THROUGHPUTCode);
+PERcc = mean(PERCode);     
 
-metrics = {'BER', 'Throughput', 'PER'};
-nc_values = [BER_nc, THR_nc, PER_nc];
-cc_values = [BER_cc, THR_cc, PER_cc];
 
+
+% BER subplot
 figure;
-
-bar([nc_values; cc_values]', 0.5);
-set(gca, 'XTickLabel', metrics);
-legend('Non Coded', 'Coded', 'Location', 'northoutside', 'Orientation','horizontal');
-title('Performance Comparison - Non Coded vs Convolutionally Coded Channel');
-ylabel('Metric Value');
+bar([BERnc, BERcc], 0.4);
+set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
+title('Bit Error Rate (BER)');
+ylabel('BER');
 grid on;
+ylim([0 max([BERnc, BERcc])*1.1]);
 
-ylim([0 max([nc_values cc_values])*1.1]);
+% Throughput subplot
+figure;
+bar([THRnc, THRcc], 0.4);
+set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
+title('Effective Throughput');
+ylabel('Throughput');
+grid on;
+ylim([0 1]);
+
+% PER subplot
+figure;
+bar([PERnc, PERcc], 0.4);
+set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
+title('Packet Error Rate (PER)');
+ylabel('PER');
+grid on;
+ylim([0 max([PERnc, PERcc])*1.1]);
 
 
 %% Data Persistence Logic
