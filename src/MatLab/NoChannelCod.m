@@ -156,7 +156,7 @@ for (i = 1:MonteCarlo)
     modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
     modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
 
-
+    
     %%Satellite Relay - it does not act as an Amplify and
     %%Forward, it acts as a passive relay.
 

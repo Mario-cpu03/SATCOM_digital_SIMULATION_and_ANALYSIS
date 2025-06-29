@@ -1,5 +1,5 @@
 %%%
 
-function [] = receiveNoCode()
+function [signalNode, powerReceived] = receiveNoCode()
 
 end

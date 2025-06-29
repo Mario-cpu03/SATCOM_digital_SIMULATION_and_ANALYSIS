@@ -50,8 +50,8 @@ Den = (RU * SatP) / (R * T);
 % Distance from the satellatie
 range = 36000e3;
 % Frequency of the carrier
-freqsend = 10e9;
-freqback = 8e9;
+freqsend = 8.2e9;
+freqback = 7.5e9;
 
 
 %% Thermal Noise construction
@@ -60,14 +60,10 @@ freqback = 8e9;
 k = 1.38e-23;
 % Kelvin Temperature
 Temp = 290;
-% Channel band uplink
-Bup = 10e9; 
-% Channel band downlink
-Bdw = 8e9;
 % Noise Power uplink
-PnUp = k * Temp * Bup;   
+PnUp = k * Temp * freqsend;   
 % Noise Power downlink
-PnDw = k * Temp * Bdw;
+PnDw = k * Temp * freqback;
 
 
 %% MonteCarlo times communication simulation
@@ -132,7 +128,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
-    Pawgn1=PReceivedSat1/(10^(SNRs/10));%-PNoiseC;
+    Pawgn1=PReceivedSat1/(10^(SNRs/10))-PNoiseC;
     NoiseAwgn1=sqrt(Pawgn1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Node->Sat in dB
@@ -142,7 +138,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
-    Pawgn2=PReceivedSat2/(10^(SNRs/10));%-PNoiseAns;
+    Pawgn2=PReceivedSat2/(10^(SNRs/10))-PNoiseAns;
     NoiseAwgn2=sqrt(Pawgn2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Node->Sat in dB
@@ -152,13 +148,19 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
-    Pawgn3=PReceivedSat3/(10^(SNRs/10));%-PNoiseAck;
+    Pawgn3=PReceivedSat3/(10^(SNRs/10))-PNoiseAck;
     NoiseAwgn3=sqrt(Pawgn3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Sat
     modSignalCommandSat = sqrt(PReceivedSat1)*modSignalCommand + NoiseAwgn1;
     modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
     modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
+
+
+
+    [modSignalCommandSat, PReceivedSat1] = transmitNoCode(Ptrans, Gter, Gsat, modSignalCommand, freqsend, SNRs, NC);
+    [modSignalAnswerSat, PReceivedSat2] = transmitNoCode(Ptrans,  modSignalAnswer, freqsend, SNRs, NANS);
+    [modSignalAckSat, PReceivedSat3] = transmitNoCode(Ptrans, modSignalAck, freqsend, SNRs, NACK);
 
 
     %%Satellite Relay - it does not act as an Amplify and
@@ -192,7 +194,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback/10));
-    PawgnBack1=PReceivedNode1/(10^(SNRs/10));%-PNoiseC;
+    PawgnBack1=PReceivedNode1/(10^(SNRs/10))-PNoiseC;
     NoiseAwgnBack1=sqrt(PawgnBack1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Sat->Node in dB
@@ -202,7 +204,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
-    PawgnBack2=PReceivedNode2/(10^(SNRs/10));%-PNoiseAns;
+    PawgnBack2=PReceivedNode2/(10^(SNRs/10))-PNoiseAns;
     NoiseAwgnBack2=sqrt(PawgnBack2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Sat->Node in dB
@@ -212,7 +214,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
-    PawgnBack3=PReceivedNode3/(10^(SNRs/10));%-PNoiseAck;
+    PawgnBack3=PReceivedNode3/(10^(SNRs/10))-PNoiseAck;
     NoiseAwgnBack3=sqrt(PawgnBack3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Node
