@@ -2,10 +2,9 @@
 
 
 ### Project Overview:
-The project aims to simulate, on a low level view, the communication via Satellite of two static terrestrial nodes, represting operative military bases.
-The simulated techology is an **X-Band MIL-STD-188 SATCOM** with asymmetrical carrier frequencies and a passive relay satellite.
-On simulated results, obtained thanks to ad hoc MATLAB scripts, a statistical analysis  will be conducted.
-A linear regression model will then formalize correlations between the overall system's performance (effective throughput, BER and PER) and all of the other's modeled parameters, such as SNR, meteorological conditions and related losses, Thermal Noise Power, Additive White Gaussian Noise Power ecc... 
+The project aims to simulate, at a low-level perspective, the satellite communication between two static terrestrial nodes representing operative military bases. The simulation is based on an **X-Band MIL-STD-188 SATCOM** system, characterized by asymmetric carrier frequencies and a geostationary passive relay satellite.
+Through a set of custom MATLAB scripts, synthetic communication data is generated under varying environmental and physical conditions. These include meteorological factors, thermal noise, additive white Gaussian noise, and signal-to-noise ratio (SNR).
+A statistical analysis will be conducted on the simulated results. In particular, a linear regression model will be developed to investigate and formalize the correlation between the system’s overall performance—evaluated in terms of effective throughput, Bit Error Rate (BER), and Packet Error Rate (PER)—and the aforementioned influencing parameters.
 
 
 ### Repository Structure:
