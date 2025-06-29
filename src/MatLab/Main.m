@@ -13,7 +13,9 @@
 % command to the Rx base. The Rx will answer with a state message as soon 
 % as the command is executed succesfully or failed. The Txbase  will send an Ack
 % message to confirm it has received the answer and close the
-% communication. The geostationary satellite will act as a relay.
+% communication. The geostationary satellite is modeled as a passive relay, 
+% meaning no amplification is performed onboard, and only antenna gains are 
+% considered in the link budget.
 % From now on, the term "communication" will refer to the process of
 % transmitting all three messages and, in this context, will be used as
 % a synonym for "simulation".

@@ -161,10 +161,12 @@ for (i = 1:MonteCarlo)
     modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
 
 
-    %%Satellite Relay amplification
-    PTransSat1 = PReceivedSat1 * 10^(Gsat/10);
-    PTransSat2 = PReceivedSat2 * 10^(Gsat/10);
-    PTransSat3 = PReceivedSat3 * 10^(Gsat/10);
+    %%Satellite Relay - it does not act as an Amplify and
+    %%Forward, it acts as a passive relay.
+
+    PTransSat1 = PReceivedSat1;
+    PTransSat2 = PReceivedSat2;
+    PTransSat3 = PReceivedSat3;
     %disp(PTransSat1); disp(PTransSat2); disp(PTransSat3); %PRINT TO CHECK
 
 
@@ -227,9 +229,7 @@ for (i = 1:MonteCarlo)
 
 
     %---------------------------------------------------------------------%
-    %scatterplot(modSignalCommandNode); title('Segnale ricevuto (Command)');
-    %scatterplot(modSignalAnswerNode); title('Segnale ricevuto (Answer)');
-    %scatterplot(modSignalAckNode); title('Segnale ricevuto (Ack)');
+
     
     %%Evaluating performance
 
@@ -251,5 +251,12 @@ for (i = 1:MonteCarlo)
     PER(i,:) = (PERcommand + PERanswer + PERack)/NumMessages;
 
 end
+
+scatterplot(modSignalCommandSat); title('(Command on SAT)');
+scatterplot(modSignalAnswerSat); title('(Answer on SAT)');
+scatterplot(modSignalAckSat); title('(Ack on SAT)');
+scatterplot(modSignalCommandNode); title('(Command)');
+scatterplot(modSignalAnswerNode); title('(Answer)');
+scatterplot(modSignalAckNode); title('(Ack)');
 
 end
