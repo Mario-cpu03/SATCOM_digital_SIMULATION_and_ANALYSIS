@@ -21,7 +21,7 @@
 % The channel is not a lossless one, in fact AWGN, Thermal Noise and
 % Atmospheric Attenuation will be summed up on the transmitted signal.
 
-function [BER, THROUGHPUT, PER, SNR] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -78,9 +78,12 @@ Gsat = 30;
 % Gain terrestrial military bases in dBi
 Gter = 40;
 
+% Signal to Noise Ratio (dB) as standard SATCOM operative scenarios for
+% medium quality conditions
+SNRs = 10;
+
 % Performance Parameters init
-BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); 
-PER = zeros(MonteCarlo,1); SNR = zeros(MonteCarlo,1);
+BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCarlo,1);
 
 
 for (i = 1:MonteCarlo)
@@ -119,8 +122,10 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
-    SNRlinear1 = PReceivedSat1/PNoiseC;
-    SNRc=10*log10(SNRlinear1);
+    Pawgn1=(PReceivedSat1/10^(SNRs/10))-PNoiseC;
+    NoiseAwgn1=sqrt(Pawgn1/2) * (randn(1,NC) + 1i*randn(1,NC));
+    %SNRlinear1 = PReceivedSat1/PNoiseC;
+    %SNRc=10*log10(SNRlinear1);
 
     % Loss Node->Sat in dB
     T = unifrnd(270,310); 
@@ -143,7 +148,8 @@ for (i = 1:MonteCarlo)
     SNRack=10*log10(SNRlinear3);
 
     % Loss + Noise on signals Sat
-    modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
+    modSignalCommandSat = modSignalCommand + NoiseAwgn1;
+    %modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
     modSignalAnswerSat = awgn(modSignalAnswer, SNRans, "measured");
     modSignalAckSat = awgn(modSignalAck, SNRack, "measured");
 
