@@ -3,8 +3,12 @@
 %% The script ChannelCod.m is responsible for the BER and throughput evaluation 
 % on a Convolutional coded channel.
 
-% The coding rate will be of 1/2, the bare minimun, due to the assumption
+% A coding rate of 1/2 will be used — the bare minimum — given the assumption
 % of non-critical communications.
+% In accordance with the MIL-STD-188 standard, for a rate 1/2 convolutional code, 
+% we adopt a constraint length of 3, meaning that the encoder retains the last 
+% 3 bits of input.
+% Two generator polynomials, 7 and 5 (in octal), will be used accordingly.
 
 % For the same reason, no encryption methods will be implemented.
 
@@ -23,7 +27,7 @@
 % frequencies.
 % For simplicity, scintillation effects will not be considered.
 
-function [BER, THROUGHPUT, PER, SNR] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -49,22 +53,210 @@ Den = (RU * SatP) / (R * T);
 % Distance from the satellatie
 range = 36000e3;
 % Frequency of the carrier
-freqsend = 10e9;
-freqback = 8e9;
+freqsend = 8.2e9;
+freqback = 7.5e9;
 
 
-%% Atmospheric Losses - random variables construction
+%% Thermal Noise construction
 
-% Loss Node->Sat in dB
-Lsend = gaspl(range,freqsend,T,P,Den);
-% Loff Sat->Node in dB
-Lback = gaspl(range,freqback,T,P,Den);
+% Boltzmann Constant
+k = 1.38e-23;
+% Kelvin Temperature
+Temp = 290;
+% Noise Power uplink
+PnUp = k * Temp * freqsend;   
+% Noise Power downlink
+PnDw = k * Temp * freqback;
 
 
-%% MonteCarlo communications simulation
+%% MonteCarlo times communication simulation
+
+% Transimission Power in Watt
+Ptrans = 25;
+
+% Gain satellite antenna in dBi
+Gsat = 30;
+
+% Gain terrestrial military bases in dBi
+Gter = 40;
+
+% Coding parameters
+constraintLength = 3;
+trellis = poly2trellis(constraintLength, [7 5]);
+tracebackLength= 5*constraintLength;
+
+% Performance Parameters init
+BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCarlo,1);
 
 for (i = 1:MonteCarlo)
     
+    %%Messages random generation:
+    NotCodedCommand = randi([0,1],1,BitTx); 
+    NotCodedAnswer = randi([0,1],1,BitRx);
+    NotCodedAck = randi([0,1],1,BitAck);
+    
+
+    %%SNR Random generation for medium-optimal conditions
+    % We'll assume that through the whole communication process (set of 3 messages
+    % sent and received by the terrestrial nodes) a pre-setted SNR will be
+    % guaranteed
+    SNRs = unifrnd(5, 25);
+
+
+    %%Coding and Modulation
+    Command = convenc(NotCodedCommand, trellis);
+    Answer = convenc(NotCodedAnswer, trellis); 
+    Ack = convenc(NotCodedAck, trellis);
+
+    modSignalCommand = pskmod(Command,4,pi/4);
+    modSignalCommand = modSignalCommand / sqrt(mean(abs(modSignalCommand).^2));
+
+    modSignalAnswer = pskmod(Answer,4,pi/4);
+    modSignalAnswer = modSignalAnswer / sqrt(mean(abs(modSignalAnswer).^2));
+
+    modSignalAck = pskmod(Ack,4,pi/4);
+    modSignalAck = modSignalAck / sqrt(mean(abs(modSignalAck).^2));
+
+
+    %%Transmission on the channel towards the satellite
+    NC = length(modSignalCommand);
+    NANS = length(modSignalAnswer);
+    NACK = length(modSignalAck);
+    NoiseStd = sqrt(PnUp);   
+
+    % Thermal Noise Node->Sat
+    ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
+    PNoiseC = mean(abs(ThermalNoiseC).^2);
+    ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
+    PNoiseAns = mean(abs(ThermalNoiseAns).^2);
+    ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    PNoiseAck = mean(abs(ThermalNoiseAck).^2);
+
+    % Loss Node->Sat in dB
+    T = unifrnd(270,310); 
+    RU = unifrnd(0,1);
+    SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+    Den = (RU * SatP) / (R * T);
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
+    Pawgn1=PReceivedSat1/(10^(SNRs/10))-PNoiseC;
+    NoiseAwgn1=sqrt(Pawgn1/2) * (randn(1,NC) + 1i*randn(1,NC));
+
+    % Loss Node->Sat in dB
+    T = unifrnd(270,310); 
+    RU = unifrnd(0,1);
+    SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+    Den = (RU * SatP) / (R * T);
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
+    Pawgn2=PReceivedSat2/(10^(SNRs/10))-PNoiseAns;
+    NoiseAwgn2=sqrt(Pawgn2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
+
+    % Loss Node->Sat in dB
+    T = unifrnd(270,310); 
+    RU = unifrnd(0,1);
+    SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+    Den = (RU * SatP) / (R * T);
+    Lsend = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
+    Pawgn3=PReceivedSat3/(10^(SNRs/10))-PNoiseAck;
+    NoiseAwgn3=sqrt(Pawgn3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
+
+    % Loss + Noise on signals Sat
+    modSignalCommandSat = sqrt(PReceivedSat1)*modSignalCommand + NoiseAwgn1;
+    modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
+    modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
+
+
+    %%Satellite Relay - it does not act as an Amplify and
+    %%Forward, it acts as a passive relay.
+    PTransSat1 = PReceivedSat1;
+    PTransSat2 = PReceivedSat2;
+    PTransSat3 = PReceivedSat3;
+    %disp(PTransSat1); disp(PTransSat2); disp(PTransSat3); %PRINT TO CHECK
+
+
+    %---------------------------------------------------------------------%
+
+
+    %%Receiving Signals on Earth
+    % Thermal Noise Sat->Node
+    NoiseStd = sqrt(PnDw);
+    ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
+    PNoiseC = mean(abs(ThermalNoiseC).^2);
+    ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
+    PNoiseAns = mean(abs(ThermalNoiseAns).^2);
+    ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
+    PNoiseAck = mean(abs(ThermalNoiseAck).^2);
+
+    % SNR received without AWGN
+    % Loss Sat->Node in dB
+    T = unifrnd(270,310); 
+    RU = unifrnd(0,1);
+    SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+    Den = (RU * SatP) / (R * T);
+    Lback = gaspl(range,freqback,T,P,Den);
+    PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback/10));
+    PawgnBack1=PReceivedNode1/(10^(SNRs/10))-PNoiseC;
+    NoiseAwgnBack1=sqrt(PawgnBack1/2) * (randn(1,NC) + 1i*randn(1,NC));
+
+    % Loss Sat->Node in dB
+    T = unifrnd(270,310); 
+    RU = unifrnd(0,1);
+    SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+    Den = (RU * SatP) / (R * T);
+    Lback = gaspl(range,freqback,T,P,Den);
+    PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
+    PawgnBack2=PReceivedNode2/(10^(SNRs/10))-PNoiseAns;
+    NoiseAwgnBack2=sqrt(PawgnBack2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
+
+    % Loss Sat->Node in dB
+    T = unifrnd(270,310); 
+    RU = unifrnd(0,1);
+    SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
+    Den = (RU * SatP) / (R * T);
+    Lback = gaspl(range,freqback,T,P,Den);
+    PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
+    PawgnBack3=PReceivedNode3/(10^(SNRs/10))-PNoiseAck;
+    NoiseAwgnBack3=sqrt(PawgnBack3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
+
+    % Loss + Noise on signals Node
+    modSignalCommandNode = sqrt(PReceivedNode1)*modSignalCommandSat + NoiseAwgnBack1;
+    modSignalAnswerNode = sqrt(PReceivedNode2)*modSignalAnswerSat + NoiseAwgnBack2;
+    modSignalAckNode = sqrt(PReceivedNode3)*modSignalAckSat + NoiseAwgnBack3;
+  
+
+    %%Demodulation, Decoding and choice (minimum distance)
+    demodSignalCommandCoded = pskdemod(modSignalCommandNode,4,pi/4); 
+    demodSignalAnswerCoded = pskdemod(modSignalAnswerNode,4,pi/4);
+    demodSignalAckCoded = pskdemod(modSignalAckNode,4,pi/4);
+    
+    demodSignalCommand = vitdec(demodSignalCommandCoded, trellis, tracebackLength, 'hard', 'trunc');
+    demodSignalAnswer = vitdec(demodSignalAnswerCoded, trellis, tracebackLength, 'hard', 'trunc');
+    demodSignalAck = vitdec(demodSignalAckCoded, trellis, tracebackLength, 'hard', 'trunc');
+
+
+    %---------------------------------------------------------------------%
+
+    
+    %%Evaluating performance
+    % Meaned BER
+    BER(i) = (sum(NotCodedCommand ~= demodSignalCommand) + sum(NotCodedAnswer ~= demodSignalAnswer) + sum(NotCodedAck ~= demodSignalAck)) / ...
+             (length(NotCodedCommand) + length(NotCodedAnswer) + length(NotCodedAck));
+
+    % Meaned THROUGHPUT
+    correctBits = length(NotCodedCommand) - sum(NotCodedCommand ~= demodSignalCommand) + ...
+                  length(NotCodedAnswer) - sum(NotCodedAnswer ~= demodSignalAnswer) + ...
+                  length(NotCodedAck) - sum(NotCodedAck ~= demodSignalAck);
+    THROUGHPUT(i) = correctBits / (length(NotCodedCommand) + length(NotCodedAnswer) + length(NotCodedAck));
+
+    % Meaned PER
+    PERcommand = any(NotCodedCommand ~= demodSignalCommand);
+    PERanswer = any(NotCodedAnswer ~= demodSignalAnswer);
+    PERack = any(NotCodedAck ~= demodSignalAck);
+
+    PER(i,:) = (PERcommand + PERanswer + PERack)/NumMessages;
+
 end
 
 end

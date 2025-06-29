@@ -1,11 +1,11 @@
 %%% NoChannelCod Script
 
-%% The script NoChannelCod.m is responsible for the BER and throughput evaluation
+%% The script NoChannelCod.m is responsible for the system's performance evaluation
 % on a non coded channel. 
 
-% This analysis will be conducted to better comprehend Convolutional Coding
-% strategies effect on the system's performance comparing its results with 
-% the ones produced by a coded channel.
+% The purpose of this analysis is to establish a baseline for comparison 
+% against convolutionally coded channels, in order to assess 
+% the effectiveness of coding techniques.
 
 % The proposed scenario is characterized by a fixed SNR per communication 
 % and Ptrans (to be seen as the transmissive power of the terrestrial nodes)
@@ -19,10 +19,11 @@
 % correlated with the Atmospheric Attenuation (L). Note that this quantity 
 % will vary depending on the considered link, due to the different carrier 
 % frequencies.
-% For simplicity, scintillation effects will not be considered.
 
-% The channel is not a lossless one, in fact AWGN, Thermal Noise and
-% Atmospheric Attenuation will be summed up on the transmitted signal.
+% The channel is not ideal: thermal noise, atmospheric attenuation and AWGN
+% are added to the transmitted signal.
+
+% Note: Scintillation effects are neglected in this model.
 
 function [BER, THROUGHPUT, PER] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
@@ -156,7 +157,7 @@ for (i = 1:MonteCarlo)
     modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
     modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
 
-    
+
     %%Satellite Relay - it does not act as an Amplify and
     %%Forward, it acts as a passive relay.
 

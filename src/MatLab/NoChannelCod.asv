@@ -1,6 +1,6 @@
 %%% NoChannelCod Script
 
-%% The script NoChannelCod.m is responsible for the BER and throughput evaluation
+%% The script NoChannelCod.m is responsible for the system's performance evaluation
 % on a non coded channel. 
 
 % This analysis will be conducted to better comprehend Convolutional Coding
@@ -155,12 +155,6 @@ for (i = 1:MonteCarlo)
     modSignalCommandSat = sqrt(PReceivedSat1)*modSignalCommand + NoiseAwgn1;
     modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
     modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
-
-
-
-    [modSignalCommandSat, PReceivedSat1] = transmitNoCode(Ptrans, Gter, Gsat, modSignalCommand, freqsend, SNRs, NC);
-    [modSignalAnswerSat, PReceivedSat2] = transmitNoCode(Ptrans,  modSignalAnswer, freqsend, SNRs, NANS);
-    [modSignalAckSat, PReceivedSat3] = transmitNoCode(Ptrans, modSignalAck, freqsend, SNRs, NACK);
 
 
     %%Satellite Relay - it does not act as an Amplify and
