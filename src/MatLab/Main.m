@@ -64,44 +64,12 @@ fprintf("\nMean Effective Throughput on a convolutional coded channel:"); disp(m
 fprintf("\nMean PER on a convolutional coded channel:"); disp(mean(PERCode))
 fprintf('\n*************\n');
 
+
 %% A simple Graphic evaluation
 
-BERnc = mean(BERNoCode);               
-THRnc = mean(THROUGHPUTNoCode);        
-PERnc = mean(PERNoCode);          
-
-BERcc = mean(BERCode);    
-THRcc = mean(THROUGHPUTCode);
-PERcc = mean(PERCode);     
-
-
-
-% BER subplot
-figure;
-bar([BERnc, BERcc], 0.4);
-set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
-title('Bit Error Rate (BER)');
-ylabel('BER');
-grid on;
-ylim([0 max([BERnc, BERcc])*1.1]);
-
-% Throughput subplot
-figure;
-bar([THRnc, THRcc], 0.4);
-set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
-title('Effective Throughput');
-ylabel('Throughput');
-grid on;
-ylim([0 1]);
-
-% PER subplot
-figure;
-bar([PERnc, PERcc], 0.4);
-set(gca, 'XTickLabel', {'Non Coded', 'Coded'});
-title('Packet Error Rate (PER)');
-ylabel('PER');
-grid on;
-ylim([0 max([PERnc, PERcc])*1.1]);
+PerformanceImprovGraph(mean(BERNoCode), mean(BERCode) ...
+    , mean(THROUGHPUTNoCode), mean(THROUGHPUTCode) ...
+    , mean(PERNoCode), mean(PERCode));
 
 
 %% Data Persistence Logic
