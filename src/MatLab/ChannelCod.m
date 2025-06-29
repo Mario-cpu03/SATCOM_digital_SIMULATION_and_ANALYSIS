@@ -27,7 +27,7 @@
 % frequencies.
 % For simplicity, scintillation effects will not be considered.
 
-function [BER, THROUGHPUT, PER, AWGN, ATMLOSSup, ATMLOSSdw, TEMPERATURE, DENSITY, THERMALNOISE] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER, AWGN, ATMLOSSup, ATMLOSSdw, TEMPERATURE, DENSITY, THERMALNOISE, SNR] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -89,8 +89,12 @@ trellis = poly2trellis(constraintLength, [7 5]);
 BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCarlo,1);
 
 % Other Parameters init
-AWGN = zeros(MonteCarlo,1); ATMLOSSup = zeros(MonteCarlo,1); ATMLOSSdw = zeros(MonteCarlo,1);
+AWGN = zeros(MonteCarlo,1); ATMLOSSup = zeros(MonteCarlo,1); ATMLOSSdw = zeros(MonteCarlo,1); 
 TEMPERATURE = zeros(MonteCarlo,1); DENSITY = zeros(MonteCarlo,1); THERMALNOISE = zeros(MonteCarlo,1);
+SNR = zeros(MonteCarlo,1);
+
+% Computing related parameters
+Tvect = zeros(6,1); Denvect = zeros(6,1);
 
 for (i = 1:MonteCarlo)
     
@@ -137,32 +141,32 @@ for (i = 1:MonteCarlo)
     PNoiseAck = mean(abs(ThermalNoiseAck).^2);
 
     % Loss Node->Sat in dB
-    T = unifrnd(270,310); 
+    T = unifrnd(270,310); Tvect(1,:) = T;
     RU = unifrnd(0,1);
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
-    Den = (RU * SatP) / (R * T);
-    Lsend = gaspl(range,freqsend,T,P,Den);
-    PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
+    Den = (RU * SatP) / (R * T); Denvect(1,:) = Den;
+    Lsend1 = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend1/10));
     Pawgn1=PReceivedSat1/(10^(SNRs/10))-PNoiseC;
     NoiseAwgn1=sqrt(Pawgn1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Node->Sat in dB
-    T = unifrnd(270,310); 
+    T = unifrnd(270,310); Tvect(2,:) = T;
     RU = unifrnd(0,1);
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
-    Den = (RU * SatP) / (R * T);
-    Lsend = gaspl(range,freqsend,T,P,Den);
-    PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
+    Den = (RU * SatP) / (R * T); Denvect(2,:) = Den;
+    Lsend2 = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend2/10));
     Pawgn2=PReceivedSat2/(10^(SNRs/10))-PNoiseAns;
     NoiseAwgn2=sqrt(Pawgn2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Node->Sat in dB
-    T = unifrnd(270,310); 
+    T = unifrnd(270,310); Tvect(3,:) = T;
     RU = unifrnd(0,1);
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
-    Den = (RU * SatP) / (R * T);
-    Lsend = gaspl(range,freqsend,T,P,Den);
-    PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
+    Den = (RU * SatP) / (R * T); Denvect(3,:) = Den;
+    Lsend3 = gaspl(range,freqsend,T,P,Den);
+    PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend3/10));
     Pawgn3=PReceivedSat3/(10^(SNRs/10))-PNoiseAck;
     NoiseAwgn3=sqrt(Pawgn3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
@@ -195,32 +199,32 @@ for (i = 1:MonteCarlo)
 
     % SNR received without AWGN
     % Loss Sat->Node in dB
-    T = unifrnd(270,310); 
+    T = unifrnd(270,310); Tvect(4,:) = T;
     RU = unifrnd(0,1);
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
-    Den = (RU * SatP) / (R * T);
-    Lback = gaspl(range,freqback,T,P,Den);
-    PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback/10));
+    Den = (RU * SatP) / (R * T); Denvect(4,:) = Den;
+    Lback1 = gaspl(range,freqback,T,P,Den);
+    PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback1/10));
     PawgnBack1=PReceivedNode1/(10^(SNRs/10))-PNoiseC;
     NoiseAwgnBack1=sqrt(PawgnBack1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Sat->Node in dB
-    T = unifrnd(270,310); 
+    T = unifrnd(270,310); Tvect(5,:) = T;
     RU = unifrnd(0,1);
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
-    Den = (RU * SatP) / (R * T);
-    Lback = gaspl(range,freqback,T,P,Den);
-    PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
+    Den = (RU * SatP) / (R * T); Denvect(5,:) = Den;
+    Lback2 = gaspl(range,freqback,T,P,Den);
+    PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback2/10));
     PawgnBack2=PReceivedNode2/(10^(SNRs/10))-PNoiseAns;
     NoiseAwgnBack2=sqrt(PawgnBack2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Sat->Node in dB
-    T = unifrnd(270,310); 
+    T = unifrnd(270,310); Tvect(6,:) = T;
     RU = unifrnd(0,1);
     SatP = P0 * exp(L / R * (1 / T0 - 1 / T));
-    Den = (RU * SatP) / (R * T);
-    Lback = gaspl(range,freqback,T,P,Den);
-    PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
+    Den = (RU * SatP) / (R * T); Denvect(6,:) = Den;
+    Lback3 = gaspl(range,freqback,T,P,Den);
+    PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback3/10));
     PawgnBack3=PReceivedNode3/(10^(SNRs/10))-PNoiseAck;
     NoiseAwgnBack3=sqrt(PawgnBack3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
@@ -245,6 +249,7 @@ for (i = 1:MonteCarlo)
     demodSignalAnswer = viterbiDecodeCustom(demodSignalAnswerCoded);
     demodSignalAck = viterbiDecodeCustom(demodSignalAckCoded);
     
+
     %---------------------------------------------------------------------%
 
     
@@ -265,6 +270,29 @@ for (i = 1:MonteCarlo)
     PERack = any(NotCodedAck ~= demodSignalAck);
 
     PER(i,:) = (PERcommand + PERanswer + PERack)/NumMessages;
+
+    % Meaned AWGN power
+    AWGN(i,:) = (Pawgn1 + Pawgn2 + Pawgn3 + ...
+                PawgnBack1 + PawgnBack2 + PawgnBack3)...
+                /(2*NumMessages);
+
+    % Meaned ATMLOSS uplink
+    ATMLOSSup(i,:) = (Lsend1 + Lsend2 + Lsend3)/NumMessages;
+
+    % Meaned ATMLOSS downlink
+    ATMLOSSdw(i,:) = (Lback1 + Lback2 + Lback3)/NumMessages;
+
+    % Meaned THERMALNOISE power
+    THERMALNOISE(i,:) = (PNoiseC + PNoiseAns + PNoiseAck)/NumMessages;
+
+    % SNR per communication
+    SNR(i,:) = SNRs;
+
+    % Meaned TEMPERATURE 
+    TEMPERATURE(i,:) = mean(Tvect);
+
+    % Meaned water vapor DENSITY
+    DENSITY(i,:) = mean(Denvect);
 
 end
 

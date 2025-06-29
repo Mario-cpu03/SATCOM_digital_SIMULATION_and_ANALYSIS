@@ -12,7 +12,7 @@
 % transmissions.
 
 % Each dataset will have the structure that follows:
-% meanBER, meanAWGN, MeanAtmLoss, 
+% meanBER, meanAWGN, MeanAtmLossUplink, MeanAtmLossDownlink, SNRpercomm
 % meanTemperature, meanDen, meanThermalNoise.
 
 function[] = DataWriting(BerDataNoCode, BerDataCode)
