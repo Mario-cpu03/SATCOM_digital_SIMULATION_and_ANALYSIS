@@ -1,7 +1,7 @@
 # SATCOM_digital_SIMULATION_and_ANALYSIS
 
 
-### Project Description:
+### Project Overview:
 The project aims to simulate, on a low level view, the communication via Satellite of two static terrestrial nodes, represting operative military bases.
 The simulated techology is an **X-Band MIL-STD-188 SATCOM** with asymmetrical carrier frequencies and a passive relay satellite.
 On simulated results, obtained thanks to ad hoc MATLAB scripts, a statistical analysis  will be conducted.
