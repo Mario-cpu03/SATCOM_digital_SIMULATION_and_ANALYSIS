@@ -7,6 +7,9 @@
 % strategies effect on the system's performance comparing its results with 
 % the ones produced by a coded channel.
 
+% The proposed scenario is characterized by a fixed SNR per communication 
+% and Ptrans (to be seen as the transmissive power of the terrestrial nodes)
+
 % Weather conditions will follow the assumption of equiprobability, 
 % in order to model different meteorological conditions without focusing 
 % on the geolocation of the nodes or other parameters. These conditions 
@@ -80,7 +83,6 @@ Gter = 40;
 
 % Signal to Noise Ratio (dB) as standard SATCOM operative scenarios for
 % medium quality conditions
-SNRs = 10;
 
 % Performance Parameters init
 BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCarlo,1);
@@ -93,6 +95,13 @@ for (i = 1:MonteCarlo)
     Answer = randi([0,1],1,BitRx);
     Ack = randi([0,1],1,BitAck);
     
+
+    %%SNR Random generation for medium-optimal conditions
+    % We'll assume that through the whole communication process (set of 3 messages
+    % sent and received by the terrestrial nodes) a pre-setted SNR will be
+    % guaranteed
+    SNRs = unifrnd(10, 25);
+
 
     %%Modulation
     modSignalCommand = pskmod(Command,4);
@@ -114,7 +123,6 @@ for (i = 1:MonteCarlo)
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
     PNoiseAck = mean(abs(ThermalNoiseAck).^2);
 
-    % SNR received without AWGN
     % Loss Node->Sat in dB
     T = unifrnd(270,310); 
     RU = unifrnd(0,1);
@@ -124,8 +132,6 @@ for (i = 1:MonteCarlo)
     PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend/10));
     Pawgn1=(PReceivedSat1/10^(SNRs/10))-PNoiseC;
     NoiseAwgn1=sqrt(Pawgn1/2) * (randn(1,NC) + 1i*randn(1,NC));
-    %SNRlinear1 = PReceivedSat1/PNoiseC;
-    %SNRc=10*log10(SNRlinear1);
 
     % Loss Node->Sat in dB
     T = unifrnd(270,310); 
@@ -134,8 +140,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
-    SNRlinear2 = PReceivedSat2/PNoiseAns;
-    SNRans=10*log10(SNRlinear2);
+    Pawgn2=(PReceivedSat2/10^(SNRs/10))-PNoiseAns;
+    NoiseAwgn2=sqrt(Pawgn2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Node->Sat in dB
     T = unifrnd(270,310); 
@@ -144,14 +150,13 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lsend = gaspl(range,freqsend,T,P,Den);
     PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend/10));
-    SNRlinear3 = PReceivedSat3/PNoiseAck;
-    SNRack=10*log10(SNRlinear3);
+    Pawgn3=(PReceivedSat3/10^(SNRs/10))-PNoiseAck;
+    NoiseAwgn3=sqrt(Pawgn3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Sat
     modSignalCommandSat = modSignalCommand + NoiseAwgn1;
-    %modSignalCommandSat = awgn(modSignalCommand, SNRc, "measured");
-    modSignalAnswerSat = awgn(modSignalAnswer, SNRans, "measured");
-    modSignalAckSat = awgn(modSignalAck, SNRack, "measured");
+    modSignalAnswerSat = modSignalAnswer + NoiseAwgn2;
+    modSignalAckSat = modSignalAck + NoiseAwgn3;
 
 
     %%Satellite Relay amplification
@@ -183,8 +188,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback/10));
-    SNRlinear1back = PReceivedNode1/PNoiseC;
-    SNRc=10*log10(SNRlinear1back);
+    PawgnBack1=(PReceivedNode1/10^(SNRs/10))-PNoiseC;
+    NoiseAwgnBack1=sqrt(PawgnBack1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Sat->Node in dB
     T = unifrnd(270,310); 
@@ -193,8 +198,8 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
-    SNRlinear2back = PReceivedNode2/PNoiseAns;
-    SNRans=10*log10(SNRlinear2back);
+    PawgnBack2=(PReceivedNode2/10^(SNRs/10))-PNoiseAns;
+    NoiseAwgnBack2=sqrt(PawgnBack2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Sat->Node in dB
     T = unifrnd(270,310); 
@@ -203,13 +208,13 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T);
     Lback = gaspl(range,freqback,T,P,Den);
     PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback/10));
-    SNRlinear3back = PReceivedNode3/PNoiseAck;
-    SNRack=10*log10(SNRlinear3back);
+    PawgnBack3=(PReceivedNode3/10^(SNRs/10))-PNoiseAck;
+    NoiseAwgnBack3=sqrt(PawgnBack3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Node
-    modSignalCommandNode = awgn(modSignalCommandSat, SNRc, "measured");
-    modSignalAnswerNode = awgn(modSignalAnswerSat, SNRans, "measured");
-    modSignalAckNode = awgn(modSignalAckSat, SNRack, "measured");
+    modSignalCommandNode = modSignalCommandSat + NoiseAwgnBack1;
+    modSignalAnswerNode = modSignalAnswerSat + NoiseAwgnBack2;
+    modSignalAckNode = modSignalAckSat + NoiseAwgnBack3;
 
 
     %%Demodulation and choice (minimum distance)
@@ -244,9 +249,6 @@ for (i = 1:MonteCarlo)
     PERack = any(Ack ~= demodSignalAck);
 
     PER(i,:) = (PERcommand + PERanswer + PERack)/NumMessages;
-
-    % Meaned SNR
-    SNR(i,:) = (SNRc + SNRans + SNRack)/NumMessages;
 
 end
 

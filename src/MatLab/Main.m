@@ -46,7 +46,9 @@ BitTx = 512; BitRx = 256; BitAck = 8;
 
 fprintf('\n*************\n');
 [BERNoCode, THROUGHPUTNoCode, PERNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
-disp(BERNoCode); disp(THROUGHPUTNoCode); disp(PERNoCode);
+%disp(transpose(BERNoCode)); disp(transpose(THROUGHPUTNoCode)); %disp(PERNoCode);
+mean(BERNoCode)
+mean(THROUGHPUTNoCode)
 fprintf('\n*************\n');
 
 
