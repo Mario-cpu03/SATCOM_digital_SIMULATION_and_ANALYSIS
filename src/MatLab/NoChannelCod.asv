@@ -97,7 +97,7 @@ for (i = 1:MonteCarlo)
     % We'll assume that through the whole communication process (set of 3 messages
     % sent and received by the terrestrial nodes) a pre-setted SNR will be
     % guaranteed
-    SNRs = unifrnd(10, 25);
+    SNRs = unifrnd(5, 25);
 
 
     %%Modulation
@@ -156,15 +156,17 @@ for (i = 1:MonteCarlo)
     NoiseAwgn3=sqrt(Pawgn3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Sat
-    modSignalCommandSat = sqrt()*modSignalCommand + NoiseAwgn1;
-    modSignalAnswerSat = modSignalAnswer + NoiseAwgn2;
-    modSignalAckSat = modSignalAck + NoiseAwgn3;
+    modSignalCommandSat = sqrt(PReceivedSat1)*modSignalCommand + NoiseAwgn1;
+    modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
+    modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
 
 
-    %%Satellite Relay amplification
-    PTransSat1 = PReceivedSat1 * 10^(Gsat/10);
-    PTransSat2 = PReceivedSat2 * 10^(Gsat/10);
-    PTransSat3 = PReceivedSat3 * 10^(Gsat/10);
+    %%Satellite Relay - it does not act as an Amplify and
+    %%Forward, it acts as a passive relay.
+
+    PTransSat1 = PReceivedSat1;
+    PTransSat2 = PReceivedSat2;
+    PTransSat3 = PReceivedSat3;
     %disp(PTransSat1); disp(PTransSat2); disp(PTransSat3); %PRINT TO CHECK
 
 
@@ -214,9 +216,9 @@ for (i = 1:MonteCarlo)
     NoiseAwgnBack3=sqrt(PawgnBack3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Node
-    modSignalCommandNode = modSignalCommandSat + NoiseAwgnBack1;
-    modSignalAnswerNode = modSignalAnswerSat + NoiseAwgnBack2;
-    modSignalAckNode = modSignalAckSat + NoiseAwgnBack3;
+    modSignalCommandNode = sqrt(PReceivedNode1)*modSignalCommandSat + NoiseAwgnBack1;
+    modSignalAnswerNode = sqrt(PReceivedNode2)*modSignalAnswerSat + NoiseAwgnBack2;
+    modSignalAckNode = sqrt(PReceivedNode3)*modSignalAckSat + NoiseAwgnBack3;
 
 
     %%Demodulation and choice (minimum distance)
@@ -227,25 +229,19 @@ for (i = 1:MonteCarlo)
 
 
     %---------------------------------------------------------------------%
-    scatterplot(modSignalCommandNode); title('Segnale ricevuto (Command)');
-    scatterplot(modSignalAnswerNode); title('Segnale ricevuto (Answer)');
-    scatterplot(modSignalAckNode); title('Segnale ricevuto (Ack)');
+
     
     %%Evaluating performance
 
     % Meaned BER
-    BERcommand = sum(Command ~= demodSignalCommand) / length(Command);
-    BERanswer = sum(Answer ~= demodSignalAnswer) / length(Answer);
-    BERack = sum(Ack ~= demodSignalAck) / length(Ack);
-
-    BER(i, :) = (BERcommand + BERanswer + BERack)/NumMessages;
+    BER(i) = (sum(Command ~= demodSignalCommand) + sum(Answer ~= demodSignalAnswer) + sum(Ack ~= demodSignalAck)) / ...
+             (length(Command) + length(Answer) + length(Ack));
 
     % Meaned THROUGHPUT
-    correctBitsCommand = length(Command) - sum(Command ~= demodSignalCommand);
-    correctBitsAnswer = length(Answer) - sum(Answer ~= demodSignalAnswer);
-    correctBitsAck = length(Ack) - sum(Ack ~= demodSignalAck);
-
-    THROUGHPUT(i,:) = (correctBitsCommand + correctBitsAnswer + correctBitsAck)/(length(Command) + length(Answer) + length(Ack));
+    correctBits = length(Command) - sum(Command ~= demodSignalCommand) + ...
+                  length(Answer) - sum(Answer ~= demodSignalAnswer) + ...
+                  length(Ack) - sum(Ack ~= demodSignalAck);
+    THROUGHPUT(i) = correctBits / (length(Command) + length(Answer) + length(Ack));
 
     % Meaned PER
     PERcommand = any(Command ~= demodSignalCommand);
