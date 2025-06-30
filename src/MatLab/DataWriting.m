@@ -35,7 +35,7 @@ filepathcc = '../../data/DataSet_RAW_ConvCode.csv';
 %% Writing first dataset
 
 fid = fopen(filepathnc, 'w');
-fprintf(fid, 'NON CODED CHANNEL:\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
+fprintf(fid, '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
 fclose(fid);
 dlmwrite(filepathnc, Resultnc, '-append');
 
@@ -43,7 +43,7 @@ dlmwrite(filepathnc, Resultnc, '-append');
 %% Writing second dataset
 
 fid = fopen(filepathcc, 'w');
-fprintf(fid, 'CONVOLUTIONAL CODED CHANNEL:\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
+fprintf(fid, '%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
 fclose(fid);
 dlmwrite(filepathcc, Resultcc, '-append');
 end
