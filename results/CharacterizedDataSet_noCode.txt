@@ -1,19 +1,29 @@
 Summary of the non-processed non-coded channel Data Set:
 
-   meanBER_nc       meanTRHOUGHPUT_nc   meanPER_nc     SNRpercomm_nc    meanAWGN_POWER_nc meanUP_LOSS_nc 
- Min.   :0.000000   Min.   :0.9201    Min.   :0.0000   Min.   : 5.006   Min.   :   5746   Min.   :39.08  
- 1st Qu.:0.000000   1st Qu.:0.9987    1st Qu.:0.0000   1st Qu.: 9.970   1st Qu.:  46365   1st Qu.:41.69  
- Median :0.000000   Median :1.0000    Median :0.0000   Median :14.915   Median : 155605   Median :42.72  
- Mean   :0.006200   Mean   :0.9938    Mean   :0.1777   Mean   :15.073   Mean   : 359436   Mean   :42.75  
- 3rd Qu.:0.001289   3rd Qu.:1.0000    3rd Qu.:0.3333   3rd Qu.:20.161   3rd Qu.: 474550   3rd Qu.:43.75  
- Max.   :0.079897   Max.   :1.0000    Max.   :1.0000   Max.   :24.991   Max.   :3028100   Max.   :46.36  
- meanDOWN_LOSS_nc meanTEMPERATURE_nc meanWV_DENSITY_nc  meanUP_THERMAL_POWER_nc meanDW_THERMAL_POWER_nc
- Min.   :38.81    Min.   :274.6      Min.   :0.001319   Min.   :2.447e-11       Min.   :2.179e-11      
- 1st Qu.:41.20    1st Qu.:286.2      1st Qu.:0.005504   1st Qu.:3.007e-11       1st Qu.:2.728e-11      
- Median :42.25    Median :289.5      Median :0.007352   Median :3.241e-11       Median :2.951e-11      
- Mean   :42.24    Mean   :289.5      Mean   :0.007513   Mean   :3.288e-11       Mean   :2.987e-11      
- 3rd Qu.:43.19    3rd Qu.:292.8      3rd Qu.:0.009243   3rd Qu.:3.518e-11       3rd Qu.:3.195e-11      
- Max.   :45.95    Max.   :305.4      Max.   :0.017323   Max.   :4.994e-11       Max.   :4.881e-11      
+                        vars    n      mean        sd    median   trimmed       mad     min        max
+meanBER_nc                 1 1000      0.01      0.02      0.00      0.00      0.00    0.00       0.08
+meanTRHOUGHPUT_nc          2 1000      0.99      0.02      1.00      1.00      0.00    0.92       1.00
+meanPER_nc                 3 1000      0.18      0.31      0.00      0.12      0.00    0.00       1.00
+SNRpercomm_nc              4 1000     15.07      5.88     14.91     15.07      7.65    5.01      24.99
+meanAWGN_POWER_nc          5 1000 359435.80 481825.18 155605.00 256869.02 190698.68 5746.00 3028100.00
+meanUP_LOSS_nc             6 1000     42.75      1.42     42.72     42.75      1.52   39.08      46.36
+meanDOWN_LOSS_nc           7 1000     42.24      1.40     42.25     42.23      1.47   38.81      45.95
+meanTEMPERATURE_nc         8 1000    289.54      4.75    289.54    289.54      4.77  274.57     305.35
+meanWV_DENSITY_nc          9 1000      0.01      0.00      0.01      0.01      0.00    0.00       0.02
+meanUP_THERMAL_POWER_nc   10 1000      0.00      0.00      0.00      0.00      0.00    0.00       0.00
+meanDW_THERMAL_POWER_nc   11 1000      0.00      0.00      0.00      0.00      0.00    0.00       0.00
+                             range  skew kurtosis       se
+meanBER_nc                    0.08  2.92     8.08     0.00
+meanTRHOUGHPUT_nc             0.08 -2.92     8.08     0.00
+meanPER_nc                    1.00  1.34     0.25     0.01
+SNRpercomm_nc                19.98  0.02    -1.22     0.19
+meanAWGN_POWER_nc       3022354.00  2.27     6.06 15236.65
+meanUP_LOSS_nc                7.28  0.02    -0.50     0.04
+meanDOWN_LOSS_nc              7.13  0.07    -0.50     0.04
+meanTEMPERATURE_nc           30.78  0.04    -0.22     0.15
+meanWV_DENSITY_nc             0.02  0.47     0.11     0.00
+meanUP_THERMAL_POWER_nc       0.00  0.68     0.61     0.00
+meanDW_THERMAL_POWER_nc       0.00  0.78     1.32     0.00
 
 
 Dimension: 
