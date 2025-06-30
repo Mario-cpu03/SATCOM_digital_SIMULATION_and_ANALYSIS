@@ -38,6 +38,26 @@ for (i in 1:11) {
   boxplot(dataRawNoCode[, i], main = names(dataRawNoCode)[i])
   dev.off()
 }
-# Clearly problematic outliers. log(x + epsilon) transformation needed.
+# Clearly problematic outliers. 
+# logit(x) transformation needed on BER and THROUGHPUT (values always between 0 and 1)
+# log(x + epsilon) transformation needed on AWGN (non limited values)
 
+# New meanBER_nc
+logitBER_nc <- log(dataRawNoCode$meanBER_nc / (1 - dataRawNoCode$meanBER_nc))
+png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_logitBER_nc.png"))
+boxplot(logitBER_nc, main = "logitBER_nc")
+dev.off()
+
+# New meanTHROUGHPUT_nc
+logitTHROUGHPUT_nc <- log(dataRawNoCode$meanTRHOUGHPUT_nc / (1 - dataRawNoCode$meanTRHOUGHPUT_nc))
+png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_logitTHROUGHPUT_nc.png"))
+boxplot(logitTHROUGHPUT_nc, main = "logitTHROUGHPUT_nc")
+dev.off()
+
+# New meanAWGN_POWER_nc
+epsilon <- min(dataRawNoCode$meanAWGN_POWER_nc[dataRawNoCode$meanAWGN_POWER_nc>0])*0.01
+logAWGN_POWER_nc <- log(dataRawNoCode$meanAWGN_POWER_nc + epsilon)
+png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_logAWGN_POWER_nc.png"))
+boxplot(logAWGN_POWER_nc, main = "logAWGN_POWER_nc")
+dev.off()
 
