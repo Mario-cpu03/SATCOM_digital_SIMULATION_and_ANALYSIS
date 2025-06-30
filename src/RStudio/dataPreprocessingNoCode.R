@@ -44,4 +44,4 @@ for (i in 1:11){
    unique(dataRawNoCode[, i])
 }
 # No Binary (categorial) variables have been found 
-# NOTE: meanPER = {0.33, 0, 1, 0.66} so it is not a continuous distribution
+# NOTE: meanPER_nc = {0.33, 0, 1, 0.66} so it is not a continuous distribution

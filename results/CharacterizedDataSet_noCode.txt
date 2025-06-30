@@ -1,0 +1,21 @@
+Summary of the non-processed non-coded channel Data Set:
+
+   meanBER_nc       meanTRHOUGHPUT_nc   meanPER_nc     SNRpercomm_nc    meanAWGN_POWER_nc meanUP_LOSS_nc 
+ Min.   :0.000000   Min.   :0.9201    Min.   :0.0000   Min.   : 5.006   Min.   :   5746   Min.   :39.08  
+ 1st Qu.:0.000000   1st Qu.:0.9987    1st Qu.:0.0000   1st Qu.: 9.970   1st Qu.:  46365   1st Qu.:41.69  
+ Median :0.000000   Median :1.0000    Median :0.0000   Median :14.915   Median : 155605   Median :42.72  
+ Mean   :0.006200   Mean   :0.9938    Mean   :0.1777   Mean   :15.073   Mean   : 359436   Mean   :42.75  
+ 3rd Qu.:0.001289   3rd Qu.:1.0000    3rd Qu.:0.3333   3rd Qu.:20.161   3rd Qu.: 474550   3rd Qu.:43.75  
+ Max.   :0.079897   Max.   :1.0000    Max.   :1.0000   Max.   :24.991   Max.   :3028100   Max.   :46.36  
+ meanDOWN_LOSS_nc meanTEMPERATURE_nc meanWV_DENSITY_nc  meanUP_THERMAL_POWER_nc meanDW_THERMAL_POWER_nc
+ Min.   :38.81    Min.   :274.6      Min.   :0.001319   Min.   :2.447e-11       Min.   :2.179e-11      
+ 1st Qu.:41.20    1st Qu.:286.2      1st Qu.:0.005504   1st Qu.:3.007e-11       1st Qu.:2.728e-11      
+ Median :42.25    Median :289.5      Median :0.007352   Median :3.241e-11       Median :2.951e-11      
+ Mean   :42.24    Mean   :289.5      Mean   :0.007513   Mean   :3.288e-11       Mean   :2.987e-11      
+ 3rd Qu.:43.19    3rd Qu.:292.8      3rd Qu.:0.009243   3rd Qu.:3.518e-11       3rd Qu.:3.195e-11      
+ Max.   :45.95    Max.   :305.4      Max.   :0.017323   Max.   :4.994e-11       Max.   :4.881e-11      
+
+
+Dimension: 
+1000
+11
