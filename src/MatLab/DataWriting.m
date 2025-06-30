@@ -17,16 +17,17 @@
 
 function[] = DataWriting(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc, ...
                          AWGNnc, AWGNcc, ATMUPnc, ATMUPcc, ATMDWnc, ATMDWcc, ...
-                         TEMPnc, TEMPcc, DENnc, DENcc, THnc, THcc, SNRnc, SNRcc)
+                         TEMPnc, TEMPcc, DENnc, DENcc, THUPnc, THUPcc, ...
+                         THDWnc, THDWcc, SNRnc, SNRcc)
 %% Results Matrices Construcion 
 
-Resultnc = [BERnc, THRnc, PERnc, SNRnc, AWGNnc, ATMUPnc, ATMDWnc, TEMPnc, DENnc, THnc];
-Resultcc = [BERcc, THRcc, PERcc, SNRnc, AWGNcc, ATMUPcc, ATMDWcc, TEMPcc, DENcc, THcc];
+Resultnc = [BERnc, THRnc, PERnc, SNRnc, AWGNnc, ATMUPnc, ATMDWnc, TEMPnc, DENnc, THUPnc, THDWnc];
+Resultcc = [BERcc, THRcc, PERcc, SNRcc, AWGNcc, ATMUPcc, ATMDWcc, TEMPcc, DENcc, THUPcc, THDWcc];
 
 
 %% Data Structure and init
 
-headers = {'BER', 'THROUGHPUT', 'PER', 'SNR', 'AWGN_POWER', 'UP_LOSS', 'DOWN_LOSS', 'TEMPERATURE', 'WV_DENSITY', 'THERMAL_POWER'};
+headers = {'BER', 'THROUGHPUT', 'PER', 'SNR', 'AWGN_POWER', 'UP_LOSS', 'DOWN_LOSS', 'TEMPERATURE', 'WV_DENSITY', 'UP_THERMAL_POWER', 'DW_THERMAL_POWER'};
 filepathnc = '../../data/DataSet_RAW_noCode.csv';
 filepathcc = '../../data/DataSet_RAW_ConvCode.csv';
 
@@ -34,7 +35,7 @@ filepathcc = '../../data/DataSet_RAW_ConvCode.csv';
 %% Writing first dataset
 
 fid = fopen(filepathnc, 'w');
-fprintf(fid, 'NON CODED CHANNEL RESULTS:\n\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
+fprintf(fid, 'NON CODED CHANNEL:\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
 fclose(fid);
 dlmwrite(filepathnc, Resultnc, '-append');
 
@@ -42,7 +43,7 @@ dlmwrite(filepathnc, Resultnc, '-append');
 %% Writing second dataset
 
 fid = fopen(filepathcc, 'w');
-fprintf(fid, 'CONVOLUTIONAL CODED CHANNEL RESULTS:\n\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
+fprintf(fid, 'CONVOLUTIONAL CODED CHANNEL:\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
 fclose(fid);
 dlmwrite(filepathcc, Resultcc, '-append');
 end

@@ -25,7 +25,7 @@
 
 % Note: Scintillation effects are neglected in this model.
 
-function [BER, THROUGHPUT, PER, AWGN, ATMLOSSup, ATMLOSSdw, TEMPERATURE, DENSITY, THERMALNOISE, SNR] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
+function [BER, THROUGHPUT, PER, AWGN, ATMLOSSup, ATMLOSSdw, TEMPERATURE, DENSITY, THERMALNOISEup, THERMALNOISEdw, SNR] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck)
 %% Weather condition random variables construction: Uniform continuous distributions  
 % Two losses will be produced: one for the Node->Sat 
 % link and one for the Sat->Node link.
@@ -83,8 +83,8 @@ BER = zeros(MonteCarlo,1); THROUGHPUT = zeros(MonteCarlo,1); PER = zeros(MonteCa
 
 % Other Parameters init
 AWGN = zeros(MonteCarlo,1); ATMLOSSup = zeros(MonteCarlo,1); ATMLOSSdw = zeros(MonteCarlo,1); 
-TEMPERATURE = zeros(MonteCarlo,1); DENSITY = zeros(MonteCarlo,1); THERMALNOISE = zeros(MonteCarlo,1);
-SNR = zeros(MonteCarlo,1);
+TEMPERATURE = zeros(MonteCarlo,1); DENSITY = zeros(MonteCarlo,1); THERMALNOISEup = zeros(MonteCarlo,1);
+THERMALNOISEdw = zeros(MonteCarlo,1); SNR = zeros(MonteCarlo,1);
 
 % Computing related parameters
 Tvect = zeros(6,1); Denvect = zeros(6,1);
@@ -123,11 +123,11 @@ for (i = 1:MonteCarlo)
 
     % Thermal Noise Node->Sat
     ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
-    PNoiseC = mean(abs(ThermalNoiseC).^2);
+    PNoiseCup = mean(abs(ThermalNoiseC).^2);
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
-    PNoiseAns = mean(abs(ThermalNoiseAns).^2);
+    PNoiseAnsup = mean(abs(ThermalNoiseAns).^2);
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
-    PNoiseAck = mean(abs(ThermalNoiseAck).^2);
+    PNoiseAckup = mean(abs(ThermalNoiseAck).^2);
 
     % Loss Node->Sat in dB
     T = unifrnd(270,310); Tvect(1,:) = T;
@@ -136,7 +136,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T); Denvect(1,:) = Den;
     Lsend1 = gaspl(range,freqsend,T,P,Den);
     PReceivedSat1 = Ptrans * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lsend1/10));
-    Pawgn1=PReceivedSat1/(10^(SNRs/10))-PNoiseC;
+    Pawgn1=PReceivedSat1/(10^(SNRs/10))-PNoiseCup;
     NoiseAwgn1=sqrt(Pawgn1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Node->Sat in dB
@@ -146,7 +146,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T); Denvect(2,:) = Den;
     Lsend2 = gaspl(range,freqsend,T,P,Den);
     PReceivedSat2 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend2/10));
-    Pawgn2=PReceivedSat2/(10^(SNRs/10))-PNoiseAns;
+    Pawgn2=PReceivedSat2/(10^(SNRs/10))-PNoiseAnsup;
     NoiseAwgn2=sqrt(Pawgn2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Node->Sat in dB
@@ -156,13 +156,13 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T); Denvect(3,:) = Den;
     Lsend3 = gaspl(range,freqsend,T,P,Den);
     PReceivedSat3 = Ptrans * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lsend3/10));
-    Pawgn3=PReceivedSat3/(10^(SNRs/10))-PNoiseAck;
+    Pawgn3=PReceivedSat3/(10^(SNRs/10))-PNoiseAckup;
     NoiseAwgn3=sqrt(Pawgn3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Sat
-    modSignalCommandSat = sqrt(PReceivedSat1)*modSignalCommand + NoiseAwgn1;
-    modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2;
-    modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3;
+    modSignalCommandSat = sqrt(PReceivedSat1)*modSignalCommand + NoiseAwgn1 + PNoiseCup;
+    modSignalAnswerSat = sqrt(PReceivedSat2)*modSignalAnswer + NoiseAwgn2 + PNoiseAnsup;
+    modSignalAckSat = sqrt(PReceivedSat3)*modSignalAck + NoiseAwgn3 + PNoiseAckup;
 
 
     %%Satellite Relay - it does not act as an Amplify and
@@ -180,11 +180,11 @@ for (i = 1:MonteCarlo)
     % Thermal Noise Sat->Node
     NoiseStd = sqrt(PnDw);
     ThermalNoiseC = NoiseStd * (randn(1, NC) + 1i*randn(1, NC)) / sqrt(2);
-    PNoiseC = mean(abs(ThermalNoiseC).^2);
+    PNoiseCdw = mean(abs(ThermalNoiseC).^2);
     ThermalNoiseAns = NoiseStd * (randn(1, NANS) + 1i*randn(1, NANS)) / sqrt(2);
-    PNoiseAns = mean(abs(ThermalNoiseAns).^2);
+    PNoiseAnsdw = mean(abs(ThermalNoiseAns).^2);
     ThermalNoiseAck = NoiseStd * (randn(1, NACK) + 1i*randn(1, NACK)) / sqrt(2);
-    PNoiseAck = mean(abs(ThermalNoiseAck).^2);
+    PNoiseAckdw = mean(abs(ThermalNoiseAck).^2);
 
     % SNR received without AWGN
     % Loss Sat->Node in dB
@@ -194,7 +194,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T); Denvect(4,:) = Den;
     Lback1 = gaspl(range,freqback,T,P,Den);
     PReceivedNode1 = PTransSat1 * 10^(Gter/10) * 10^(Gsat/10)* 10^(-(Lback1/10));
-    PawgnBack1=PReceivedNode1/(10^(SNRs/10))-PNoiseC;
+    PawgnBack1=PReceivedNode1/(10^(SNRs/10))-PNoiseCdw;
     NoiseAwgnBack1=sqrt(PawgnBack1/2) * (randn(1,NC) + 1i*randn(1,NC));
 
     % Loss Sat->Node in dB
@@ -204,7 +204,7 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T); Denvect(5,:) = Den;
     Lback2 = gaspl(range,freqback,T,P,Den);
     PReceivedNode2 = PTransSat2 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback2/10));
-    PawgnBack2=PReceivedNode2/(10^(SNRs/10))-PNoiseAns;
+    PawgnBack2=PReceivedNode2/(10^(SNRs/10))-PNoiseAnsdw;
     NoiseAwgnBack2=sqrt(PawgnBack2/2) * (randn(1,NANS) + 1i*randn(1,NANS));
 
     % Loss Sat->Node in dB
@@ -214,13 +214,13 @@ for (i = 1:MonteCarlo)
     Den = (RU * SatP) / (R * T); Denvect(6,:) = Den;
     Lback3 = gaspl(range,freqback,T,P,Den);
     PReceivedNode3 = PTransSat3 * 10^(Gter/10) * 10^(Gsat/10) * 10^(-(Lback3/10));
-    PawgnBack3=PReceivedNode3/(10^(SNRs/10))-PNoiseAck;
+    PawgnBack3=PReceivedNode3/(10^(SNRs/10))-PNoiseAckdw;
     NoiseAwgnBack3=sqrt(PawgnBack3/2) * (randn(1,NACK) + 1i*randn(1,NACK));
 
     % Loss + Noise on signals Node
-    modSignalCommandNode = sqrt(PReceivedNode1)*modSignalCommandSat + NoiseAwgnBack1;
-    modSignalAnswerNode = sqrt(PReceivedNode2)*modSignalAnswerSat + NoiseAwgnBack2;
-    modSignalAckNode = sqrt(PReceivedNode3)*modSignalAckSat + NoiseAwgnBack3;
+    modSignalCommandNode = sqrt(PReceivedNode1)*modSignalCommandSat + NoiseAwgnBack1 + PNoiseCdw;
+    modSignalAnswerNode = sqrt(PReceivedNode2)*modSignalAnswerSat + NoiseAwgnBack2 + PNoiseAnsdw;
+    modSignalAckNode = sqrt(PReceivedNode3)*modSignalAckSat + NoiseAwgnBack3 + PNoiseAckdw;
 
 
     %%Demodulation and choice (minimum distance)
@@ -261,8 +261,11 @@ for (i = 1:MonteCarlo)
     % Meaned ATMLOSS downlink
     ATMLOSSdw(i,:) = (Lback1 + Lback2 + Lback3)/NumMessages;
 
-    % Meaned THERMALNOISE power
-    THERMALNOISE(i,:) = (PNoiseC + PNoiseAns + PNoiseAck)/NumMessages;
+    % Meaned THERMALNOISE power Uplink
+    THERMALNOISEup(i,:) = (PNoiseCup + PNoiseAnsup + PNoiseAckup)/NumMessages;
+
+    % Meaned THERMALNOISE power Downlink
+    THERMALNOISEdw(i,:) = (PNoiseCdw + PNoiseAnsdw + PNoiseAckdw)/NumMessages;
 
     % SNR per communication
     SNR(i,:) = SNRs;
