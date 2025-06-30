@@ -31,4 +31,13 @@ writeLines(summaryDataSet, "../../results/CharacterizedDataSet_noCode.txt")
 # check for non-good outliers, especially on leptokurtic distributions such as:
 # BER, THROUGHPUT and AWGN Power.
 
+## GRAPHIC EVALUATION
+
+for (i in 1:11) {
+  png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_", names(dataRawNoCode)[i], ".png"))
+  boxplot(dataRawNoCode[, i], main = names(dataRawNoCode)[i])
+  dev.off()
+}
+# Clearly problematic outliers. log(x + epsilon) transformation needed.
+
 
