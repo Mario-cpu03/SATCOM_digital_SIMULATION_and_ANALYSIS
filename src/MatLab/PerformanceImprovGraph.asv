@@ -16,7 +16,9 @@
 % Atmospheric Loss (Up and Down) and all of the other output parametrs of
 % ChannelCod.m and NoChannelCod.m files.
 
-function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc)
+function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc, ...
+                                     AWGNnc, AWGNcc, ATMUPnc, ATMUPcc, ATMDWnc, ATMDWcc, ...
+                                     TEMPnc, TEMPcc, DENnc, DENcc, THnc, THcc, SNRnc, SNRcc)
 %% BER plot
 
 f1 = figure;
@@ -59,7 +61,18 @@ saveas(f3, '../../results/cc-nc_COMPARISON/PER_Improvements.png');
 
 % txt file
 fid = fopen('../../results/cc-nc_COMPARISON/Mean-Parameters_COMPARISON.txt', 'w');
-fprintf(fid, 'Summary of simulated results.\n');
+fprintf(fid, ['Summary of the simulated results.\nPlease note that the following values represent the average performance of the system, ' ...
+              'computed over all MonteCarlo iterations. Each iteration simulates the exchange ' ...
+              'of three messages, both with and without convolutional coding -respectively in Sim. 1 and Sim. 2- to provide a robust ' ...
+              'estimate of the system’s average behavior under varying conditions.\n\n']);
+
+fprintf(fid, 'Sim. 1 - No Convolutional Coding Techniques:\n');
+fprintf(fid, 'BER:%.6f\n', BERnc); fprintf(fid, 'Effective Throughput:%.6f\n', THRnc); fprintf(fid, 'PER:%.6f\n', BERnc);
+fprintf(fid, 'SNR:%.6f\n', SNRnc); fprintf(fid, 'AWGN Power:%.6f\n', BERnc); fprintf(fid, 'BER:%.6f\n', BERnc);
+fprintf(fid, 'BER:%.6f\n', BERnc); fprintf(fid, 'BER:%.6f\n', BERnc); fprintf(fid, 'BER:%.6f\n', BERnc);
+fprintf(fid, 'BER:%.6f\n\n', BERnc);
 
 
+
+fprintf(fid, '\nSim. 2 - Convolutional Coding Techniques:\n');
 end

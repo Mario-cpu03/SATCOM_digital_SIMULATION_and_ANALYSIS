@@ -16,7 +16,9 @@
 % Atmospheric Loss (Up and Down) and all of the other output parametrs of
 % ChannelCod.m and NoChannelCod.m files.
 
-function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc)
+function [] = PerformanceImprovGraph(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc, ...
+                                     AWGNnc, AWGNcc, ATMUPnc, ATMUPcc, ATMDWnc, ATMDWcc, ...
+                                     TEMPnc, TEMPcc, DENnc, DENcc, THnc, THcc, SNRnc, SNRcc)
 %% BER plot
 
 f1 = figure;
@@ -59,8 +61,23 @@ saveas(f3, '../../results/cc-nc_COMPARISON/PER_Improvements.png');
 
 % txt file
 fid = fopen('../../results/cc-nc_COMPARISON/Mean-Parameters_COMPARISON.txt', 'w');
-fprintf(fid, 'Summary of simulated results.\n\n');
-fprintf(fid, 'Simulation 1 - No Convolutional Coding Techniques:\n');
+fprintf(fid, ['Summary of the simulated results.\nPlease note that the following values represent the average performance of the system, ' ...
+              'computed over all MonteCarlo iterations. Each iteration simulates the exchange ' ...
+              'of three messages, both with and without convolutional coding -respectively in Sim. 1 and Sim. 2- to provide a robust ' ...
+              'estimate of the system’s average behavior under varying conditions.\n\n']);
 
-fprintf(fid, '\nSimulation 2 - Convolutional Coding Techniques:\n');
+fprintf(fid, 'Sim. 1 - No Convolutional Coding Techniques:\n');
+fprintf(fid, 'BER:%.6f\n', BERnc); fprintf(fid, 'Effective Throughput:%.6f\n', THRnc); fprintf(fid, 'PER:%.6f\n', BERnc);
+fprintf(fid, 'SNR in dB:%.6f\n', SNRnc); fprintf(fid, 'AWGN Power:%.6f\n', AWGNnc); fprintf(fid, 'Thermal Noise Power:%.15f\n', THnc);
+fprintf(fid, 'Atmospheric Temperature:%.6f\n', TEMPnc); fprintf(fid, 'Water Vapor Density:%.6f\n', DENnc); 
+fprintf(fid, 'Uplink Atmospheric Attenuation:%.6f\n', ATMUPnc); fprintf(fid, 'Downlink Atmospheric Attenuation:%.6f\n', ATMDWnc);
+fprintf(fid, '\n');
+
+fprintf(fid, '\nSim. 2 - Convolutional Coding Techniques:\n');
+fprintf(fid, 'BER:%.6f\n', BERcc); fprintf(fid, 'Effective Throughput:%.6f\n', THRcc); fprintf(fid, 'PER:%.6f\n', BERcc);
+fprintf(fid, 'SNR in dB:%.6f\n', SNRcc); fprintf(fid, 'AWGN Power:%.6f\n', AWGNcc); fprintf(fid, 'Thermal Noise Power:%.15f\n', THcc);
+fprintf(fid, 'Atmospheric Temperature:%.6f\n', TEMPcc); fprintf(fid, 'Water Vapor Density:%.6f\n', DENcc); 
+fprintf(fid, 'Uplink Atmospheric Attenuation:%.6f\n', ATMUPcc); fprintf(fid, 'Downlink Atmospheric Attenuation:%.6f\n', ATMDWcc);
+fprintf(fid, '\n');
+fclose(fid);
 end

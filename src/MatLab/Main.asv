@@ -48,7 +48,7 @@ BitTx = 512; BitRx = 256; BitAck = 8;
 %% Start Simulation without Convolution Coding
 
 fprintf('\n*************\n');
-[BERNoCode, THROUGHPUTNoCode, PERNoCode, AWGNNoCode, ATMLOSSupNoCode, ATMLOSSdwNoCode, TEMPERATURENoCode, DENSITYNoCode, THERMALNOISENoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+[BERNoCode, THROUGHPUTNoCode, PERNoCode, AWGNNoCode, ATMLOSSupNoCode, ATMLOSSdwNoCode, TEMPERATURENoCode, DENSITYNoCode, THERMALNOISENoCode, SNRNoCode] = NoChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
 fprintf("\nMean BER on a non coded channel:"); disp(mean(BERNoCode));
 fprintf("\nMean Effective Throughput on a non coded channel:"); disp(mean(THROUGHPUTNoCode));
 fprintf("\nMean PER on a non coded channel:");  disp(mean(PERNoCode))
@@ -58,7 +58,7 @@ fprintf('\n*************\n');
 %% Start Simulation with Convolution Coding
 
 fprintf('\n*************\n');
-[BERCode, THROUGHPUTCode, PERCode, AWGNCode, ATMLOSSCode, TEMPERATURECode, DENSITYCode, THERMALNOISECode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
+[BERCode, THROUGHPUTCode, PERCode, AWGNCode, ATMLOSSupCode, ATMLOSSdwCode, TEMPERATURECode, DENSITYCode, THERMALNOISECode, SNRCode] = ChannelCod(MonteCarlo, NumMessages, BitTx, BitRx, BitAck);
 fprintf("\nMean BER on a convolutional coded channel:"); disp(mean(BERCode)); 
 fprintf("\nMean Effective Throughput on a convolutional coded channel:"); disp(mean(THROUGHPUTCode)); 
 fprintf("\nMean PER on a convolutional coded channel:"); disp(mean(PERCode))
@@ -69,7 +69,13 @@ fprintf('\n*************\n');
 
 PerformanceImprovGraph(mean(BERNoCode), mean(BERCode) ...
     , mean(THROUGHPUTNoCode), mean(THROUGHPUTCode) ...
-    , mean(PERNoCode), mean(PERCode));
+    , mean(PERNoCode), mean(PERCode) ...
+    , mean(AWGNNoCode), mean(AWGNCode) ...
+    , mean(ATMLOSSupNoCode), mean(ATMLOSSupCode) ...
+    , mean(ATMLOSSdwNoCode), mean(ATMLOSSdwCode) ...
+    , mean(TEMPERATURENoCode), mean(TEMPERATURECode) ...
+    , mean(DENSITYNoCode), mean(DENSITYCode) ...
+    , mean(), mean());
 
 
 %% Data Persistence Logic

@@ -9,7 +9,7 @@
 
 % The first dataset will contain data of the Non coded
 % transmissions, while the second one will contain data produced by 
-% the Convolution Coded simulation.
+% the Convolution Coded simulation, 
 
 % Each dataset will have the structure that follows:
 % meanBER, meanTRHOUGHPUT, SNRpercomm, meanAWGN, MeanAtmLossUplink, MeanAtmLossDownlink,
@@ -33,16 +33,6 @@ filepathcc = '../../data/DataSet_RAW_ConvCode.csv';
 
 %% Writing first dataset
 
-fid = fopen(filepathnc, 'w');
-fprintf(fid, 'NON CODED CHANNEL RESULTS:\n\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
-fclose(fid);
-dlmwrite(filepathnc, Resultnc, '-append');
-
-
-%% Writing second dataset
-
 fid = fopen(filepathcc, 'w');
-fprintf(fid, 'CONVOLUTIONAL CODED CHANNEL RESULTS:\n\n%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n', headers{:});
-fclose(fid);
-dlmwrite(filepathcc, Resultcc, '-append');
+
 end
