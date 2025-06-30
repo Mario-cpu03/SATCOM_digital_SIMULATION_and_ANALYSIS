@@ -12,8 +12,8 @@
 % the Convolution Coded simulation.
 
 % Each dataset will have the structure that follows:
-% meanBER, meanTRHOUGHPUT, SNRpercomm, meanAWGN, MeanAtmLossUplink, MeanAtmLossDownlink,
-% meanTemperature, meanDen, meanThermalNoise.
+% meanBER, meanTRHOUGHPUT, meanPER, SNRpercomm, meanAWGN_POWER, meanUP_LOSS, meanDOWN_LOSS,
+% meanTEMPERATURE, meanWV_DENSITY, meanUP_THERMAL_POWER, meanDW_THERMAL_POWER.
 
 function[] = DataWriting(BERnc, BERcc, THRnc, THRcc, PERnc, PERcc, ...
                          AWGNnc, AWGNcc, ATMUPnc, ATMUPcc, ATMDWnc, ATMDWcc, ...
@@ -27,7 +27,7 @@ Resultcc = [BERcc, THRcc, PERcc, SNRcc, AWGNcc, ATMUPcc, ATMDWcc, TEMPcc, DENcc,
 
 %% Data Structure and init
 
-headers = {'BER', 'THROUGHPUT', 'PER', 'SNR', 'AWGN_POWER', 'UP_LOSS', 'DOWN_LOSS', 'TEMPERATURE', 'WV_DENSITY', 'UP_THERMAL_POWER', 'DW_THERMAL_POWER'};
+headers = {'meanBER', 'meanTRHOUGHPUT', 'meanPER', 'SNRpercomm', 'meanAWGN_POWER', 'meanUP_LOSS', 'meanDOWN_LOSS', 'meanTEMPERATURE', 'meanWV_DENSITY', 'meanUP_THERMAL_POWER', 'meanDW_THERMAL_POWER'};
 filepathnc = '../../data/DataSet_RAW_noCode.csv';
 filepathcc = '../../data/DataSet_RAW_ConvCode.csv';
 
