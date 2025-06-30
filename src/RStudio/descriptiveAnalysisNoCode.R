@@ -11,6 +11,7 @@
 
 # The following script will be useful and necessary to the correlation analysis phase.
 
+
 ## EXPLORATION
 
 sDS <- capture.output(psych::describe(dataRawNoCode))
@@ -18,18 +19,21 @@ summaryDataSet <- c("Summary of the non-processed non-coded channel Data Set:\n"
                     sDS, "\n",
                     "Dimension: ", dim(dataRawNoCode))
 writeLines(summaryDataSet, "../../results/CharacterizedDataSet_noCode.txt")
-# Strong skewness on BER, THROUGHPUT, PER and AWGN Power.
-# Moderate skewness on both Up and Down THERMAL Power.
-# Minor skewness on other parameters.
+# Strong skewness observed in BER, THROUGHPUT, PER, and AWGN Power.
+# Moderate skewness present in both Uplink and Downlink Thermal Noise Power.
+# Minor skewness detected in the remaining parameters.
 
-# Sensibly high Kurtosis values on BER, THROUGHPUT and AWGN Power.
+# Significantly high kurtosis values in BER, THROUGHPUT, and AWGN Power,
+# indicating heavy-tailed distributions.
 
-# Platikurtic distributions on every other parameter.
+# Platykurtic behavior observed in all other variables.
 
-# Note that the emerged skewness must be reduced with appropriate transformations.
-# Moreover, a boxplot graphic evaluation is necessary in order to
-# check for non-good outliers, especially on leptokurtic distributions such as:
-# BER, THROUGHPUT and AWGN Power.
+# The identified skewness should be addressed with appropriate transformations 
+# to improve distribution symmetry and modeling suitability.
+# Additionally, boxplot visualizations are recommended to assess potential 
+# outliers, particularly within leptokurtic distributions such as BER, 
+# THROUGHPUT, and AWGN Power.
+
 
 ## GRAPHIC EVALUATION
 
@@ -38,9 +42,9 @@ for (i in 1:11) {
   boxplot(dataRawNoCode[, i], main = names(dataRawNoCode)[i])
   dev.off()
 }
-# Clearly problematic outliers. 
-# logit(x) transformation needed on BER and THROUGHPUT (values always between 0 and 1)
-# log(x + epsilon) transformation needed on AWGN (non limited values)
+# Presence of clearly problematic outliers.
+# A logit(x) transformation is recommended for BER and THROUGHPUT, as their values lie strictly within the (0,1) interval.
+# A log(x + ε) transformation is more suitable for AWGN Power, given its unbounded positive domain.
 
 # New meanBER_nc
 logitBER_nc <- log(dataRawNoCode$meanBER_nc / (1 - dataRawNoCode$meanBER_nc))

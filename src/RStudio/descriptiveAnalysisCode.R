@@ -11,6 +11,7 @@
 
 # The following script will be useful and necessary to the correlation analysis phase.
 
+
 ## EXPLORATION
 
 sDS <- capture.output(psych::describe(dataRawCode))
@@ -18,19 +19,20 @@ summaryDataSet <- c("Summary of the non-processed Convolutional Coded channel Da
                     sDS, "\n",
                     "Dimension: ", dim(dataRawCode))
 writeLines(summaryDataSet, "../../results/CharacterizedDataSet_ConvCode.txt")
-# Strong skewness on BER, THROUGHPUT, PER and AWGN Power.
-# Moderate skewness on Down THERMAL Power( and Water Vapor DENSITY, most likely due to noise on values).
-# Minor skewness on other parameters.
+# Strong skewness observed in BER, THROUGHPUT, PER, and AWGN Power.
+# Moderate skewness detected in Downlink Thermal Power and Water Vapor Density,
+# likely due to value noise or non-modeled sensor variability.
+# Minor skewness affects the remaining parameters.
 
-# Extremely high Kurtosis values on BER, THROUGHPUT, PER and 
-# sensibly high values for AWGN Power.
+# Extremely high kurtosis values are present in BER, THROUGHPUT, and PER,
+# with noticeably elevated values also in AWGN Power.
 
-# Accentuate Platikurtic distributions on every other parameter.
+# Most of the other parameters exhibit pronounced platykurtic distributions.
 
-# Note that the emerged skewness must be reduced with appropriate transformations.
-# Moreover, a boxplot graphic evaluation is necessary in order to
-# check for non-good outliers, especially on Leptokurtic distributions such as:
-# BER, THROUGHPUT and AWGN Power.
+# Skewness should be reduced via appropriate transformations to improve modeling accuracy.
+# Additionally, a boxplot-based evaluation is advised to detect and assess
+# potential outliers, particularly in leptokurtic distributions such as BER, THROUGHPUT, and AWGN Power.
+
 
 ## GRAPHIC EVALUATION
 
@@ -40,6 +42,28 @@ for (i in 1:11) {
   boxplot(dataRawCode[, i], main = names(dataRawCode)[i])
   dev.off()
 }
-# Clearly problematic outliers. log(x + epsilon) transformation needed.
+# The coded channel shows very problematic outliers, even more accentuated than in the non-coded case.
+# A more reliable communication leads to extremely rare error events, which must not be ignored.
+# They represent the true edge cases where the system’s performance is tested.
+# A logit(x) transformation is recommended for BER and THROUGHPUT, as their values lie strictly within (0,1).
+# A log(x + epsilon) transformation is appropriate for AWGN power, which spans a non-limited range.
 
+# New meanBER_cc
+logitBER_cc <- log(dataRawCode$meanBER_cc / (1 - dataRawCode$meanBER_cc))
+png(filename = paste0("../../results/boxplots/box_cc/", "boxplot_logitBER_cc.png"))
+boxplot(logitBER_cc, main = "logitBER_cc")
+dev.off()
+
+# New meanTHROUGHPUT_cc
+logitTHROUGHPUT_cc <- log(dataRawCode$meanTRHOUGHPUT_cc / (1 - dataRawNoCode$meanTRHOUGHPUT_cc))
+png(filename = paste0("../../results/boxplots/box_cc/", "boxplot_logitTHROUGHPUT_cc.png"))
+boxplot(logitTHROUGHPUT_cc, main = "logitTHROUGHPUT_cc")
+dev.off()
+
+# New meanAWGN_POWER_nc
+epsilon <- min(dataRawCode$meanAWGN_POWER_cc[dataRawCode$meanAWGN_POWER_cc>0])*0.01
+logAWGN_POWER_cc <- log(dataRawCode$meanAWGN_POWER_cc + epsilon)
+png(filename = paste0("../../results/boxplots/box_cc/", "boxplot_logAWGN_POWER_cc.png"))
+boxplot(logAWGN_POWER_cc, main = "logAWGN_POWER_cc")
+dev.off()
 

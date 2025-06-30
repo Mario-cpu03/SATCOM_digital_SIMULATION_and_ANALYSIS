@@ -6,6 +6,7 @@
 # Dimensions, NA values, variables domain and modalities will be checked
 # in order to define an omogeneous set of values that can be correctly modeled.
 
+
 ## PRELIMINARY CONTROLS
 
 # First rows check
