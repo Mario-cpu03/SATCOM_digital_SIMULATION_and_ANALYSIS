@@ -11,6 +11,8 @@
 
 # The following script will be useful and necessary to the correlation analysis phase.
 
+library(MASS)
+
 
 ## EXPLORATION
 
