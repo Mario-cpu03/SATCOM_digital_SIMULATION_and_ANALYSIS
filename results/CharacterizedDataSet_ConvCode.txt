@@ -1,0 +1,29 @@
+Summary of the non-processed Convolutional Coded channel Data Set:
+
+                        vars    n      mean        sd    median   trimmed       mad     min        max
+meanBER_cc                 1 1000      0.00      0.00      0.00      0.00      0.00    0.00       0.03
+meanPER_cc                 2 1000      0.03      0.13      0.00      0.00      0.00    0.00       1.00
+SNRpercomm_cc              3 1000     15.25      5.79     15.23     15.29      7.40    5.01      24.98
+meanAWGN_POWER_cc          4 1000 369106.92 512423.19 147140.00 255048.79 178700.74 6925.60 3919100.00
+meanUP_LOSS_cc             5 1000     42.69      1.45     42.63     42.68      1.51   39.02      46.55
+meanDOWN_LOSS_cc           6 1000     42.12      1.42     42.06     42.09      1.48   38.78      45.82
+meanTEMPERATURE_cc         7 1000    289.98      4.69    290.10    290.00      4.87  275.12     303.72
+meanWV_DENSITY_cc          8 1000      0.01      0.00      0.01      0.01      0.00    0.00       0.02
+meanUP_THERMAL_POWER_cc    9 1000      0.00      0.00      0.00      0.00      0.00    0.00       0.00
+meanDW_THERMAL_POWER_cc   10 1000      0.00      0.00      0.00      0.00      0.00    0.00       0.00
+                             range  skew kurtosis       se
+meanBER_cc                    0.03  7.81    77.16     0.00
+meanPER_cc                    1.00  4.66    22.57     0.00
+SNRpercomm_cc                19.97 -0.04    -1.18     0.18
+meanAWGN_POWER_cc       3912174.40  2.41     7.24 16204.24
+meanUP_LOSS_cc                7.52  0.05    -0.46     0.05
+meanDOWN_LOSS_cc              7.04  0.16    -0.42     0.04
+meanTEMPERATURE_cc           28.60 -0.05    -0.25     0.15
+meanWV_DENSITY_cc             0.02  0.52     0.02     0.00
+meanUP_THERMAL_POWER_cc       0.00  0.39    -0.20     0.00
+meanDW_THERMAL_POWER_cc       0.00  0.62     0.48     0.00
+
+
+Dimension: 
+1000
+10

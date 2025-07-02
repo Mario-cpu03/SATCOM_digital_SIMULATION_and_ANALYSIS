@@ -41,7 +41,7 @@ cat("\nVariables domain:\n")
 sapply(dataRawCode, class)
 
 # Variability range check
-for (i in 1:11){
+for (i in 1:10){
   unique(dataRawCode[, i])
 }
 # No Binary (categorial) variables have been found 

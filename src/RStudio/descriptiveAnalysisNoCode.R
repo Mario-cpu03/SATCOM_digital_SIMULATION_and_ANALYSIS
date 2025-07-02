@@ -19,11 +19,11 @@ summaryDataSet <- c("Summary of the non-processed non-coded channel Data Set:\n"
                     sDS, "\n",
                     "Dimension: ", dim(dataRawNoCode))
 writeLines(summaryDataSet, "../../results/CharacterizedDataSet_noCode.txt")
-# Strong skewness observed in BER, THROUGHPUT, PER, and AWGN Power.
+# Strong skewness observed in BER, PER, and AWGN Power.
 # Moderate skewness present in both Uplink and Downlink Thermal Noise Power.
 # Minor skewness detected in the remaining parameters.
 
-# Significantly high kurtosis values in BER, THROUGHPUT, and AWGN Power,
+# Significantly high kurtosis values in BER, and AWGN Power,
 # indicating heavy-tailed distributions.
 
 # Platykurtic behavior observed in all other variables.
@@ -31,31 +31,24 @@ writeLines(summaryDataSet, "../../results/CharacterizedDataSet_noCode.txt")
 # The identified skewness should be addressed with appropriate transformations 
 # to improve distribution symmetry and modeling suitability.
 # Additionally, boxplot visualizations are recommended to assess potential 
-# outliers, particularly within leptokurtic distributions such as BER, 
-# THROUGHPUT, and AWGN Power.
+# outliers, particularly within leptokurtic distributions such as BER, and AWGN Power.
 
 
 ## GRAPHIC EVALUATION
 
-for (i in 1:11) {
+for (i in 1:10) {
   png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_", names(dataRawNoCode)[i], ".png"))
   boxplot(dataRawNoCode[, i], main = names(dataRawNoCode)[i])
   dev.off()
 }
 # Presence of clearly problematic outliers.
-# A logit(x) transformation is recommended for BER and THROUGHPUT, as their values lie strictly within the (0,1) interval.
+# A logit(x) transformation is recommended for BER, as its value lie strictly within the (0,1) interval.
 # A log(x + ε) transformation is more suitable for AWGN Power, given its unbounded positive domain.
 
 # New meanBER_nc
 logitBER_nc <- log(dataRawNoCode$meanBER_nc / (1 - dataRawNoCode$meanBER_nc))
 png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_logitBER_nc.png"))
 boxplot(logitBER_nc, main = "logitBER_nc")
-dev.off()
-
-# New meanTHROUGHPUT_nc
-logitTHROUGHPUT_nc <- log(dataRawNoCode$meanTRHOUGHPUT_nc / (1 - dataRawNoCode$meanTRHOUGHPUT_nc))
-png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_logitTHROUGHPUT_nc.png"))
-boxplot(logitTHROUGHPUT_nc, main = "logitTHROUGHPUT_nc")
 dev.off()
 
 # New meanAWGN_POWER_nc
