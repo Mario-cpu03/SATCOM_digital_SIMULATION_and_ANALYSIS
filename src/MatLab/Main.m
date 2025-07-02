@@ -34,9 +34,13 @@
 % Frequency Band choice, one more time accordingly with the chosen
 % protocol, is an SHF X-band (8.2GHz uplink and 7.5GHz downlink)
 
-% System's performance will be evaluated using mostly BER (Bit Error Rate) 
-% and Effective Throughput. 
+% System's performance will be evaluated using mostly BER (Bit Error Rate)
+% and Effective Throughput.
 % A secondary performance parameter will be PER (Packet Error Rate).
+
+% Note: Given the mathematical nature of the effective throughput parameter
+% and it's dependence from the Bit Error Rate, it's value will be neglected
+% in the statistical analysis section of this project.
 
 function [] = Main(MonteCarlo)
 %% Init Parameters
@@ -83,7 +87,6 @@ PerformanceImprovGraph(mean(BERNoCode), mean(BERCode) ...
 %% Data Persistence Logic
 
 DataWriting(BERNoCode, BERCode ...
-    , THROUGHPUTNoCode, THROUGHPUTCode ...
     , PERNoCode, PERCode ...
     , AWGNNoCode, AWGNCode ...
     , ATMLOSSupNoCode, ATMLOSSupCode ...

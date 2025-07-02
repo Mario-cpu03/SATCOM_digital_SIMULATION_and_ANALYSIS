@@ -2,29 +2,29 @@ Summary of the simulated results.
 Please note that the following values represent the average performance of the system, computed over all MonteCarlo iterations. Each iteration simulates the exchange of three messages, both with and without convolutional coding -respectively in Sim. 1 and Sim. 2- to provide a robust estimate of the system’s average behavior under varying conditions.
 
 Sim. 1 - No Convolutional Coding Techniques:
-BER:0.006200
-Effective Throughput:0.993800
-PER:0.006200
-SNR in dB:15.073142
-AWGN Power:359435.537676
-Uplink Thermal Noise Power:0.000000000032884
-Down Thermal Noise Power:0.000000000029869
-Atmospheric Temperature:289.536333
-Water Vapor Density:0.007513
-Uplink Atmospheric Attenuation:42.749841
-Downlink Atmospheric Attenuation:42.240797
+BER:0.006466
+Effective Throughput:0.993534
+PER:0.006466
+SNR in dB:14.666287
+AWGN Power:402066.154268
+Uplink Thermal Noise Power:0.000000000032816
+Down Thermal Noise Power:0.000000000030115
+Atmospheric Temperature:289.947073270919930
+Water Vapor Density:0.007486
+Uplink Atmospheric Attenuation:42.655067
+Downlink Atmospheric Attenuation:42.160434
 
 
 Sim. 2 - Convolutional Coding Techniques:
-BER:0.000425
-Effective Throughput:0.999575
-PER:0.000425
-SNR in dB:15.010196
-AWGN Power:388572.561334
-Uplink Thermal Noise Power:0.000000000032870
-Down Thermal Noise Power:0.000000000029992
-Atmospheric Temperature:290.054281
-Water Vapor Density:0.007519
-Uplink Atmospheric Attenuation:42.640173
-Downlink Atmospheric Attenuation:42.129234
+BER:0.000396
+Effective Throughput:0.999604
+PER:0.000396
+SNR in dB:15.248922
+AWGN Power:369106.972219
+Uplink Thermal Noise Power:0.000000000032770
+Down Thermal Noise Power:0.000000000030223
+Atmospheric Temperature:289.980183
+Water Vapor Density:0.007544
+Uplink Atmospheric Attenuation:42.686345
+Downlink Atmospheric Attenuation:42.118193
 
