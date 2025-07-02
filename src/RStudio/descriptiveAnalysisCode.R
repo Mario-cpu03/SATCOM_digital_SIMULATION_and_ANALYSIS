@@ -49,7 +49,21 @@ for (i in 1:10) {
 # A log(x + epsilon) transformation is appropriate for AWGN power, which spans a non-limited range.
 
 # New meanBER_cc
-logitBER_cc <- log(dataRawCode$meanBER_cc / (1 - dataRawCode$meanBER_cc))
+# Check on possible +-Inf values for exactly 0 or exactly 1 values of BER
+has0 <- any(dataRawCode$meanBER_cc == 0, na.rm = TRUE)
+has1  <- any(dataRawCode$meanBER_cc == 1, na.rm = TRUE)
+if (has0 | has1) {
+  cat("\nOut of logit domain values detected: epsilon correction is needed.\n")
+} else {
+  cat("\nAll values inside logit domain: epsilon correction not needed.\n")
+}
+# Given that the polarized values represents the very essence
+# of this performance statistical analysis, due to mathematical reasons, a pure logit
+# transformation would produce too many +-Inf values.
+# Clipping BER with epsilon
+epsilon <- 1e-6
+berClipped_cc <- pmin(pmax(dataRawCode$meanBER_cc, epsilon), 1 - epsilon)
+logitBER_cc <- log(berClipped_cc / (1 - berClipped_cc))
 png(filename = paste0("../../results/boxplots/box_cc/", "boxplot_logitBER_cc.png"))
 boxplot(logitBER_cc, main = "logitBER_cc")
 dev.off()

@@ -46,7 +46,21 @@ for (i in 1:10) {
 # A log(x + ε) transformation is more suitable for AWGN Power, given its unbounded positive domain.
 
 # New meanBER_nc
-logitBER_nc <- log(dataRawNoCode$meanBER_nc / (1 - dataRawNoCode$meanBER_nc))
+# Check on possible +-Inf values for exactly 0 or exactly 1 values of BER
+has0 <- any(dataRawNoCode$meanBER_nc == 0, na.rm = TRUE)
+has1  <- any(dataRawNoCode$meanBER_nc == 1, na.rm = TRUE)
+if (has0 | has1) {
+  cat("\nOut of logit domain values detected: epsilon correction is needed.\n")
+} else {
+  cat("\nAll values inside logit domain: epsilon correction not needed.\n")
+}
+# Given that the polarized values (i.e. meanBER_nc == 1) represents the very essence
+# of this performance statistical analysis, due to mathematical reasons, a pure logit
+# transformation would produce too many +-Inf values.
+# Clipping BER with  epsilon
+epsilon <- 1e-6
+berClipped_nc <- pmin(pmax(dataRawNoCode$meanBER_nc, epsilon), 1 - epsilon)
+logitBER_nc <- log(berClipped_nc / (1 - berClipped_nc))
 png(filename = paste0("../../results/boxplots/box_nc/", "boxplot_logitBER_nc.png"))
 boxplot(logitBER_nc, main = "logitBER_nc")
 dev.off()
